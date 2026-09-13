@@ -75,10 +75,33 @@ DOCUMENT_FIELDS_DATE = {
     'withhold_purchase': 'creation_date',
 }
 
+class LocalXsdResolver(etree.Resolver):
+    """Resolve the xmldsig core schema locally.
+
+    Several SRI XSDs import ``http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd``
+    (or a relative ``xmldsig-core-schema.xsd``). lxml does not fetch remote schemas,
+    so map any such import to the copy bundled under ``utilities/xsd``.
+    """
+
+    def __init__(self, xmldsig_path):
+        super().__init__()
+        self.xmldsig_path = xmldsig_path
+
+    def resolve(self, url, pubid, context):
+        if url and url.endswith("xmldsig-core-schema.xsd"):
+            return self.resolve_filename(self.xmldsig_path, context)
+        return None
+
+
 class XMLGenerator:
     def __init__(self, xsd_file):
         self.xsd_file = xsd_file
-        self.schema = etree.XMLSchema(file=self.xsd_file)
+        xmldsig_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "xsd", "xmldsig-core-schema.xsd"
+        )
+        parser = etree.XMLParser()
+        parser.resolvers.add(LocalXsdResolver(xmldsig_path))
+        self.schema = etree.XMLSchema(etree.parse(self.xsd_file, parser))
         self.nsmap = {
             None: "http://www.w3.org/2001/XMLSchema",
             'ds': "http://www.w3.org/2000/09/xmldsig#"
@@ -101,6 +124,8 @@ class XMLGenerator:
 
     def _build_xml(self, parent, data_dict):
         for key, value in data_dict.items():
+            if value is None:
+                continue
             if isinstance(value, dict):
                 child = etree.SubElement(parent, key)
                 self._build_xml(child, value)
@@ -116,9 +141,11 @@ class XMLGenerator:
         try:
             self.schema.assertValid(xml_doc)
             print("El XML es válido según el XSD.")
+            return True
         except etree.DocumentInvalid as e:
             print("El XML no es válido según el XSD:")
             print(e)
+            return False
 
 def fix_infoAdicional(xml_tree):
     root = xml_tree.getroot()
@@ -327,17 +354,14 @@ def build_xml_data(data_object, doc_name, typeDocSri, siteName):
 
     xml_doc = fix_infoAdicional(xml_doc)
 
+    # Omitir elementos vacíos antes de validar contra el XSD
+    remove_empty_elements(xml_doc.getroot())
+
     # Validar el XML con respecto al XSD
     validationResult = xml_generator.validate_xml(xml_doc.getroot())
 
     if not validationResult:
         print("No debe retornar nada")
-        #return ""
-    #frappe.local.response.filename = doc_name + "." + typeFile
-    #frappe.local.response.filecontent = response.content
-    #frappe.local.response.type = "download"
-
-    remove_empty_elements(xml_doc.getroot())
     xml_str = ElementTree.tostring(xml_doc.getroot(), encoding='utf-8')
     #xml_beautified = xml_str.decode()
     xml_beautified = xml.dom.minidom.parseString(xml_str).toprettyxml()
