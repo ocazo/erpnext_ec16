@@ -52,7 +52,7 @@ def insert_new_data(DocTypeName, JsonPath):
                     #Continua con las siguientes subcuentas
                     continue
                 except Exception as e:
-                    print("Error:" + e)
+                    print("Error:" + str(e))
         
                 continue                
 
@@ -103,7 +103,7 @@ def update_data(DocTypeName, JsonPath):
             #raise ReferenceError("Error de prueba")
         
         except Exception as e:
-            print("Error:" + e)
+            print("Error:" + str(e))
 
         continue
 

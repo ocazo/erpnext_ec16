@@ -11,9 +11,9 @@ import erpnext
 import json
 from types import SimpleNamespace
 
-from erpnext_ec.patches.v15_0 import print_formats, import_tools, email_template
-from erpnext_ec.patches.v15_0 import print_formats_online, email_template_online
-from erpnext_ec.patches.v15_0 import sri_estab_import_tools
+from erpnext_ec.patches.v16_0 import print_formats, import_tools, email_template
+from erpnext_ec.patches.v16_0 import print_formats_online, email_template_online
+from erpnext_ec.patches.v16_0 import sri_estab_import_tools
 
 @frappe.whitelist()
 def load_accounts():

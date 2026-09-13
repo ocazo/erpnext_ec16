@@ -1,2 +1,4 @@
- #!/bin/bash
-bench --site principal execute erpnext_ec.patches.v15_0.custom_fields.rename_old_columns
+#!/bin/bash
+# Usage: ./run_patch_custom_fields.sh [site]
+SITE="${1:-erp.local}"
+bench --site "$SITE" execute erpnext_ec.patches.v16_0.custom_fields.rename_old_columns
