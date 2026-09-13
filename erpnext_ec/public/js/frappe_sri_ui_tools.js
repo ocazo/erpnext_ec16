@@ -47,6 +47,11 @@ function SetupCustomButtons(doc, DocTypeErpNext)
             
             //console.log(doc.name);
             var docApi = await frappe.db.get_doc(DocTypeErpNext, doc.name);
+
+            // Factura/comprobante no electrónico: no agregar acciones SRI
+            if (docApi.emitir_sri !== undefined && !cint(docApi.emitir_sri)) {
+                return false;
+            }
             
             //Lograr que sea visible en mobile
             $('.list-actions').parent().removeClass('hidden-md');
@@ -191,6 +196,11 @@ function SetListSriButtons(DocTypeErpNext)
 
 function allowSendSri(docApi)
 {
+	if (docApi.emitir_sri !== undefined && !cint(docApi.emitir_sri))
+	{
+		return false;
+	}
+
 	if ((docApi.numeroautorizacion == null || docApi.numeroautorizacion == "" || docApi.numeroautorizacion == "0") && docApi.sri_estado != 200)
 	{
 		return true;
@@ -203,6 +213,11 @@ function allowSendSri(docApi)
 
 function SetFormSriButtons(frm, DocTypeErpNext)
 {
+	// Factura/comprobante no electrónico: sin acciones SRI
+	if (frm.doc.emitir_sri !== undefined && !cint(frm.doc.emitir_sri)) {
+		return;
+	}
+
 	//console.log('allowSendSri');
 	//console.log(allowSendSri(frm.doc));
 

@@ -9,6 +9,11 @@ frappe.listview_settings[doctype_customized].button = {
             return false;
         }
 
+        // Factura no electrónica: no mostrar acciones SRI
+        if (doc.emitir_sri !== undefined && !cint(doc.emitir_sri)) {
+            return false;
+        }
+
         SetupCustomButtons(doc, doctype_customized);
         return true;
     },

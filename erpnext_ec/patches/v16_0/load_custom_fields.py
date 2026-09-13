@@ -55,10 +55,14 @@ def execute():
 				continue
 
 			doctype = record.get("dt")
-			if not doctype or not record.get("fieldname"):
+			fieldname = record.get("fieldname")
+			if not doctype or not fieldname:
 				continue
 
 			df = {key: value for key, value in record.items() if key not in IGNORED_KEYS}
+			# Frappe stores Custom Field names in lower case; align to avoid
+			# "create when it already exists" crashes in create_custom_fields.
+			df["fieldname"] = fieldname.lower()
 			custom_fields.setdefault(doctype, []).append(df)
 
 	if custom_fields:
