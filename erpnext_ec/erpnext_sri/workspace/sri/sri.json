@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"zGVrPDbnHn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Sri</span>\",\"col\":12}},{\"id\":\"jUYKLjvGRZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Retenciones\",\"col\":3}},{\"id\":\"MtTIC-F4iI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Secuencias\",\"col\":3}},{\"id\":\"UAo3z71NbA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Firmas Electr\\u00f3nicas\",\"col\":3}},{\"id\":\"sriCfgChk01\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Configuraci\\u00f3n SRI\",\"col\":3}}]",
+ "content": "[{\"id\":\"zGVrPDbnHn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Sri</span>\",\"col\":12}},{\"id\":\"UAo3z71NbA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Firmas Electrónicas\",\"col\":3}},{\"id\":\"sriEstab001\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Establecimientos\",\"col\":3}},{\"id\":\"sriPtoemi001\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Puntos de Emisión\",\"col\":3}},{\"id\":\"jUYKLjvGRZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Retenciones\",\"col\":3}},{\"id\":\"MtTIC-F4iI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Secuencias\",\"col\":3}},{\"id\":\"sriCfgChk01\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Configuración SRI\",\"col\":3}}]",
  "creation": "2024-01-26 11:24:07.707685",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Sri",
  "links": [],
- "modified": "2026-09-14 00:00:00.000000",
+ "modified": "2026-09-14 01:00:00.000000",
  "modified_by": "Administrator",
  "module": "Erpnext Sri",
  "name": "Sri",
@@ -28,8 +28,22 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Firmas Electr\u00f3nicas",
+   "label": "Firmas Electrónicas",
    "link_to": "Sri Signature",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Establecimientos",
+   "link_to": "Sri Establishment",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Puntos de Emisión",
+   "link_to": "Sri Ptoemi",
    "type": "DocType"
   },
   {
@@ -49,7 +63,7 @@
   },
   {
    "color": "Grey",
-   "label": "Configuraci\u00f3n SRI",
+   "label": "Configuración SRI",
    "link_to": "sri-validation",
    "type": "Page"
   }
