@@ -62,7 +62,7 @@ def build_doc_grs(doc_name):
 		customer_phone = customer_full['customer_phone']
 		customer_email_id = customer_full['customer_email_id']
 
-		doc.infoAdicional = build_infoAdicional_sri(doc_name, customer_email_id, customer_phone)
+		doc.infoAdicional = build_infoAdicional_sri(doc_name, customer_email_id, customer_phone, doc.company)
 
 		# Obtener datos de entrega desde delivery trip y stops
 
@@ -235,12 +235,13 @@ def build_doc_grs_sri(data_object):
         },
         "infoGuiaRemision": {
             #"fechaEmision": data_object.posting_date.strftime("%d/%m/%Y"), # data_object.posting_date,			
-			#"dirEstablecimiento": data_object.dirEstablecimiento.upper(),
-			"dirPartida": data_object.dirEstablecimiento.upper().strip(),
-			"razonSocialTransportista": data_object.razonSocialTransportista.upper().strip(),
-			"tipoIdentificacionTransportista": data_object.tipoIdentificacionTransportista,
-			"rucTransportista": data_object.rucTransportista,
-			"obligadoContabilidad": obligadoContabilidad,
+            "dirEstablecimiento": data_object.dirEstablecimiento.upper().strip(),
+            "dirPartida": data_object.dirEstablecimiento.upper().strip(),
+            "razonSocialTransportista": data_object.razonSocialTransportista.upper().strip(),
+            "tipoIdentificacionTransportista": data_object.tipoIdentificacionTransportista,
+            "rucTransportista": data_object.rucTransportista,
+            "rise": data_object.get("rise"),
+            "obligadoContabilidad": obligadoContabilidad,
 			"contribuyenteEspecial": data_object.contribuyenteEspecial,
 			#"fecha": data_object.posting_date.strftime("%d/%m/%Y"),
 			"fechaIniTransporte": data_object.fechaInicioTransporte.strftime("%d/%m/%Y"), #"01/04/2024",

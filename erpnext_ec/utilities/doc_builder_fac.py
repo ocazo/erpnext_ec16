@@ -91,7 +91,7 @@ def build_doc_fac(doc_name):
 		#for paym in  doc.paymentsItems:
 		#	print(paym)
 
-		doc.infoAdicional = build_infoAdicional_sri(doc_name, customer_email_id, customer_phone)
+		doc.infoAdicional = build_infoAdicional_sri(doc_name, customer_email_id, customer_phone, doc.company)
 
 		# print(doc.infoAdicional)
 		#doc.taxes_full = get_full_taxes(doc.taxes)		
@@ -262,12 +262,15 @@ def build_doc_fac_sri(data_object):
             "tipoIdentificacionComprador": data_object.tipoIdentificacionComprador,
             "razonSocialComprador": data_object.customer_name.upper(),
             "identificacionComprador": data_object.customer_tax_id,
+            "direccionComprador": data_object.get("direccionComprador"),
+            "guiaRemision": data_object.get("guiaRemision"),
             "totalSinImpuestos": "{:.2f}".format(data_object.base_total),
             "totalDescuento": "{:.2f}".format(data_object.totalDescuento),
             "totalConImpuestos": totalConImpuestos,
             "propina": "0.00",
             "importeTotal": "{:.2f}".format(data_object.grand_total),
             "moneda": "DOLAR",
+            "placa": data_object.get("placa"),
             "pagos": pagos
         },
         "detalles": {

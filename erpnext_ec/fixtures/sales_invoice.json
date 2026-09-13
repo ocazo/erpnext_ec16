@@ -624,5 +624,20 @@
   "doctype": "Custom Field",
   "dt": "Sales Invoice",
   "depends_on": "eval:doc.emitir_sri"
+ },
+ {
+  "name": "Sales Invoice-placa",
+  "parent": "Customize Form",
+  "parentfield": "fields",
+  "parenttype": "Customize Form",
+  "docstatus": 0,
+  "label": "Placa",
+  "fieldtype": "Data",
+  "fieldname": "placa",
+  "insert_after": "secuencial",
+  "depends_on": "eval:doc.emitir_sri",
+  "description": "Placa del vehículo (facturas de transporte, ANEXO 25 Ficha Técnica SRI).",
+  "doctype": "Custom Field",
+  "dt": "Sales Invoice"
  }
 ]

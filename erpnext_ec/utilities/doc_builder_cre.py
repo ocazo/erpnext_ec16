@@ -78,7 +78,7 @@ def build_doc_cre(doc_name):
 			supplier_phone = supplier_full['supplier_phone']
 			supplier_email_id = supplier_full['supplier_email_id']
 		
-		doc.infoAdicional = build_infoAdicional_sri(doc_name, supplier_email_id, supplier_phone)
+		doc.infoAdicional = build_infoAdicional_sri(doc_name, supplier_email_id, supplier_phone, doc.company)
 
 		doc.supplier_phone = supplier_phone
 		doc.supplier_email_id = supplier_email_id
@@ -199,8 +199,8 @@ def build_doc_cre_sri(data_object):
         },
         "infoCompRetencion": {
             "fechaEmision": data_object.fechaEmision.strftime("%d/%m/%Y"), # data_object.posting_date,
-            #"dirEstablecimiento": data_object.dirEstablecimiento.upper(),
-            #"contribuyenteEspecial": data_object.contribuyenteEspecial,
+            "dirEstablecimiento": data_object.get("dirEstablecimiento") and data_object.dirEstablecimiento.upper(),
+            "contribuyenteEspecial": data_object.contribuyenteEspecial,
             "obligadoContabilidad": obligadoContabilidad,
             "tipoIdentificacionSujetoRetenido": data_object.tipoIdentificacionSujetoRetenido,
             "razonSocialSujetoRetenido": data_object.razonSocialSujetoRetenido.upper(),

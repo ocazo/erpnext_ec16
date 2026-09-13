@@ -47,7 +47,7 @@ def normalize_string(source_str):
         normalized_str = source_str  # Considera devolver la cadena original o manejar de otra manera
     return normalized_str
 
-def build_infoAdicional_sri(doc_name, customer_email_id, customer_phone):
+def build_infoAdicional_sri(doc_name, customer_email_id, customer_phone, company=None):
 
     commentsApi = frappe.get_all('Comment', filters = { 'reference_name': doc_name }, fields='*' );
     # print('COMENTAAAAAARIOOOOOOSSSSSS')
@@ -73,6 +73,28 @@ def build_infoAdicional_sri(doc_name, customer_email_id, customer_phone):
                             "valor":strComment
                             }
                         ];
+
+    if company:
+        # ANEXO 24 (Gran Contribuyente) y ANEXO 26 (RUC Proveedor de sistemas)
+        company_fields = frappe.db.get_value(
+            "Company",
+            company,
+            ["tipo_contribuyente", "resolucion_gran_contribuyente", "ruc_proveedor_sistemas"],
+            as_dict=True,
+        ) or {}
+
+        if company_fields.get("tipo_contribuyente") == "Gran Contribuyente":
+            infoAdicionalData.append(
+                {
+                    "nombre": "Gran Contribuyente",
+                    "valor": company_fields.get("resolucion_gran_contribuyente") or "",
+                }
+            )
+
+        if company_fields.get("ruc_proveedor_sistemas"):
+            infoAdicionalData.append(
+                {"nombre": "RUC Proveedor", "valor": company_fields.get("ruc_proveedor_sistemas")}
+            )
 
     return infoAdicionalData
 
