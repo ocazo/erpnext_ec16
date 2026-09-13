@@ -9,9 +9,6 @@ from pprint import pformat
 from OpenSSL import crypto
 from random import randrange
 
-import xmlsig
-from xades import template,XAdESContext
-from xades.policy import GenericPolicyId, ImpliedPolicy
 import frappe
 from frappe import _
 
