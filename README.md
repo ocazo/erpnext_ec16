@@ -2,6 +2,16 @@
 
 ERPNext Ecuador
 
+## Compatibility
+
+- ERPNext / Frappe Framework v16
+- Python 3.14
+
+This branch (`migrate-v16`) supports **only** Frappe/ERPNext v16 on Python 3.14.
+Legacy support for v13/v14/v15 has been removed.
+
+See [CHANGELOG.md](CHANGELOG.md) for the migration details.
+
 <div align="center">
     <a href="https://erpnext.com">
         <img src="https://raw.githubusercontent.com/frappe/erpnext/develop/erpnext/public/images/erpnext-logo.png" height="128">
