@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"zGVrPDbnHn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Sri</span>\",\"col\":12}},{\"id\":\"jUYKLjvGRZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Retenciones\",\"col\":3}},{\"id\":\"MtTIC-F4iI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Secuencias\",\"col\":3}},{\"id\":\"UAo3z71NbA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Firmas Electr\u00f3nicas\",\"col\":3}}]",
+ "content": "[{\"id\":\"zGVrPDbnHn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Sri</span>\",\"col\":12}},{\"id\":\"jUYKLjvGRZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Retenciones\",\"col\":3}},{\"id\":\"MtTIC-F4iI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Secuencias\",\"col\":3}},{\"id\":\"UAo3z71NbA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Firmas Electr\\u00f3nicas\",\"col\":3}},{\"id\":\"sriCfgChk01\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Configuraci\\u00f3n SRI\",\"col\":3}}]",
  "creation": "2024-01-26 11:24:07.707685",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Sri",
  "links": [],
- "modified": "2024-01-29 08:42:33.540814",
+ "modified": "2026-09-14 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Erpnext Sri",
  "name": "Sri",
@@ -46,6 +46,12 @@
    "label": "Secuencias",
    "link_to": "Sri Sequence",
    "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "label": "Configuraci\u00f3n SRI",
+   "link_to": "sri-validation",
+   "type": "Page"
   }
  ],
  "title": "Sri"
