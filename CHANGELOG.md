@@ -49,6 +49,14 @@
   `frappe.get_list(..., fields=["MAX(secuencial) as max_secuencial"])`, which
   v16 rejects ("SQL functions are not allowed as strings in SELECT"). Replaced
   with a `frappe.db.sql` aggregate.
+- **Signing (`xades_tool_v4`)**: the inserted XAdES block carried a leading and
+  trailing whitespace tail, so removing the `Signature` element during the
+  enveloped-signature transform changed the document digest and invalidated the
+  signature. The block is now stripped before insertion; the reference digest
+  matches and the signature verifies (RSA-SHA1).
+- The external `XadesSignerCmd` requires the .NET 6 runtime, which is not
+  installed here, so signing uses the bundled Python signer
+  (`Regional Settings Ec.signature_tool = "Python Native (With Fails)"`).
 
 ### Added
 - `CHANGELOG.md`.
