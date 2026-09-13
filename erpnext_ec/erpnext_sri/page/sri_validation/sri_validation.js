@@ -105,7 +105,22 @@ frappe.sri_validation.load = function (page) {
 				);
 				return;
 			}
-			$results.html(frappe.sri_validation.html(r.message.groups));
+
+			var groups = r.message.groups;
+			var ready = groups.every(function (group) {
+				return group.SettingsAreReady;
+			});
+
+			var banner = ready
+				? `<div class="alert alert-success">
+						<b>${__("Configuración compatible con el SRI")}</b>
+					</div>`
+				: `<div class="alert alert-danger">
+						<b>${__("Configuración incompatible con el SRI")}</b><br>
+						${__("Revise y corrija los puntos marcados antes de generar documentos electrónicos.")}
+					</div>`;
+
+			$results.html(banner + frappe.sri_validation.html(groups));
 		},
 		error: function () {
 			$results.html(
