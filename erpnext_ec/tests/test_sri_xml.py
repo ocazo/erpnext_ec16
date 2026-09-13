@@ -146,6 +146,7 @@ def _cre():
 		impuestos=[
 			_d(
 				idx=1,
+				codigo=2,
 				codigoRetencionId="1",
 				baseImponible=100.0,
 				porcentajeRetener=1.0,
@@ -232,3 +233,92 @@ class TestSriXmlGeneration(FrappeTestCase):
 
 	def test_liquidacion_compra(self):
 		self._build_and_validate("LIQ")
+
+	def test_factura_two_decimals(self):
+		with contextlib.redirect_stdout(io.StringIO()):
+			xml = build_xml_data(_fac(), "TST-FAC-0002", "FAC", frappe.local.site)
+		root = etree.fromstring(xml.encode("utf-8"))
+		importe = root.findtext(".//importeTotal")
+		cantidad = root.findtext(".//detalles/detalle/cantidad")
+		self.assertEqual(importe, "115.00")
+		self.assertEqual(cantidad, "1.00")
+
+	def test_retencion_uses_sri_code(self):
+		with contextlib.redirect_stdout(io.StringIO()):
+			xml = build_xml_data(_cre(), "TST-CRE-0002", "CRE", frappe.local.site)
+		root = etree.fromstring(xml.encode("utf-8"))
+		# codigo = 2 (IVA, tabla 19), no el idx de la fila (1)
+		self.assertEqual(root.findtext(".//impuestos/impuesto/codigo"), "2")
+
+	def test_nota_debito_structure(self):
+		data = _ncr()
+		data.codDocModificado = "01"
+		data.numDocModificado = "001-001-000000001"
+		data.fechaEmisionDocSustento = datetime.date(2026, 9, 13)
+		data.motivo = "AJUSTE"
+		with contextlib.redirect_stdout(io.StringIO()):
+			xml = build_xml_data(data, "TST-NDE-0001", "NDE", frappe.local.site)
+		root = etree.fromstring(xml.encode("utf-8"))
+		self.assertEqual(root.findtext(".//codDoc"), "05")
+		self.assertIsNotNone(root.find(".//infoNotaDebito/impuestos"))
+		self.assertIsNotNone(root.findtext(".//infoNotaDebito/valorTotal"))
+		self.assertIsNotNone(root.find(".//motivos/motivo/razon"))
+
+	def test_ncr_rimpe_conditional(self):
+		data = _ncr()
+		data.contribuyenteRimpe = ""
+		with contextlib.redirect_stdout(io.StringIO()):
+			xml = build_xml_data(data, "TST-NCR-0002", "NCR", frappe.local.site)
+		root = etree.fromstring(xml.encode("utf-8"))
+		self.assertIsNone(root.find(".//infoTributaria/contribuyenteRimpe"))
+
+		data.contribuyenteRimpe = "CONTRIBUYENTE RÉGIMEN RIMPE"
+		with contextlib.redirect_stdout(io.StringIO()):
+			xml = build_xml_data(data, "TST-NCR-0003", "NCR", frappe.local.site)
+		root = etree.fromstring(xml.encode("utf-8"))
+		self.assertEqual(
+			root.findtext(".//infoTributaria/contribuyenteRimpe"),
+			"CONTRIBUYENTE RÉGIMEN RIMPE",
+		)
+
+	def test_liquidacion_without_reembolso(self):
+		with contextlib.redirect_stdout(io.StringIO()):
+			xml = build_xml_data(_liq(), "TST-LIQ-0002", "LIQ", frappe.local.site)
+		root = etree.fromstring(xml.encode("utf-8"))
+		self.assertIsNone(root.find(".//totalComprobantesReembolso"))
+		self.assertIsNone(root.find(".//totalImpuestoReembolso"))
+
+
+class TestSriInvoiceFlags(FrappeTestCase):
+	def test_estab_ptoemi_not_mandatory(self):
+		meta = frappe.get_meta("Sales Invoice")
+		for fieldname in ("estab", "ptoemi"):
+			df = meta.get_field(fieldname)
+			self.assertIsNotNone(df)
+			self.assertFalse(df.reqd)
+			self.assertIn("emitir_sri", df.depends_on or "")
+
+	def test_non_sri_invoice_can_be_created(self):
+		company = frappe.get_all("Company", pluck="name", limit=1)
+		customer = frappe.get_all("Customer", pluck="name", limit=1)
+		item = frappe.get_all("Item", pluck="name", limit=1)
+		if not (company and customer and item):
+			self.skipTest("no hay datos maestros")
+
+		doc = frappe.get_doc(
+			{
+				"doctype": "Sales Invoice",
+				"company": company[0],
+				"customer": customer[0],
+				"posting_date": "2026-09-13",
+				"set_posting_time": 1,
+				"currency": frappe.db.get_value("Company", company[0], "default_currency") or "USD",
+				"conversion_rate": 1,
+				"emitir_sri": 0,
+				"items": [{"item_code": item[0], "qty": 1, "rate": 10}],
+			}
+		)
+		doc.insert(ignore_permissions=True)
+		self.assertTrue(doc.name)
+		self.assertFalse(doc.get("estab"))
+		self.assertFalse(doc.get("ptoemi"))

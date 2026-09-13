@@ -62,13 +62,39 @@
 - `CHANGELOG.md`.
 - `erpnext_ec/tests/test_sri_xml.py`: validates generated Factura, Guía de
   Remisión, Comprobante de Retención, Nota de Crédito and Liquidación de Compra
-  XML against the bundled SRI XSDs.
+  XML against the bundled SRI XSDs, plus regression tests for the Ficha Técnica
+  v2.34 alignment and for non-SRI invoices.
+
+### Ficha Técnica SRI v2.34 alignment
+- **Non-SRI invoices**: `Company.facturacion_electronica` (master switch) and
+  `Sales Invoice.emitir_sri` let the app run with the localization installed and
+  still issue normal (non-electronic) sales invoices. `estab`/`ptoemi` are only
+  mandatory when `emitir_sri` is set, the invalid `ptoemi` default (`002`) was
+  removed, and SRI buttons/actions are hidden for non-electronic documents.
+- **Retention**: `<codigo>` now uses the SRI tax code (from the withholding
+  account) instead of the child row index.
+- **Debit note**: `codDoc` set to `05` and the document rebuilt per the Ficha
+  (`impuestos`, `valorTotal`, `pagos`, `motivos/motivo/razon/valor`).
+- **RIMPE**: `contribuyenteRimpe` is conditional and driven by
+  `Company.tipo_contribuyente`, including RIMPE Negocio Popular (45 chars).
+- **Liquidación**: reembolso totals are omitted when `codDocReembolso` is not 41.
+- **Formatting**: monetary/quantity values emitted with 2 decimals.
+- **Sequences**: `estab`/`ptoemi` Link values are normalised to `record_name`
+  before `setSecuencial`, so sequences are assigned and the XML uses `001/002`.
+- **Additional fields**: `direccionComprador`/`guiaRemision` (factura),
+  `dirEstablecimiento`/`rise` (guía), `dirEstablecimiento`/`contribuyenteEspecial`
+  (retención); `placa` (transporte); Gran Contribuyente and RUC Proveedor in
+  `infoAdicional`.
+- New optional Company fields: `facturacion_electronica`, `tipo_contribuyente`,
+  `resolucion_gran_contribuyente`, `regimen_microempresas`,
+  `ruc_proveedor_sistemas`.
 
 ### Pending / not changed on purpose
-- Fiscal logic and formatting (e.g. number formatting of `importeTotal`) was
-  left untouched.
-- Electronic signing (`.p12`, XAdES, SRI authorization) is not validated in
-  this branch yet.
+- Some conditional annexes are not emitted yet: `valorDevolucionIva` (ANEXO 20),
+  `codigoAuxiliar` (ANEXO 23/25), `maquinaFiscal` (ANEXO 13),
+  `regimenMicroempresas`.
+- Electronic signing is validated locally with simulation mode only; not yet
+  tested against the SRI sandbox.
 
 ### Notes
 - Backward compatibility with Frappe/ERPNext v13/v14/v15 has been dropped.
