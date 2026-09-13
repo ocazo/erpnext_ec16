@@ -156,6 +156,8 @@ def build_doc_grs(doc_name):
 		doc.sri_validated = sri_validated
 		doc.sri_validated_message = sri_validated_message
 
+		normalize_establishment_and_ptoemi(doc)
+
 		if(not doc.secuencial or doc.secuencial == 0):
 			new_secuencial = setSecuencial(doc, 'GRS')
 			if new_secuencial > 0:
@@ -208,9 +210,7 @@ def build_doc_grs_sri(data_object):
 	if(data_object.obligadoContabilidad == 1):
 		obligadoContabilidad = 'SI'
 
-	contribuyenteRimpe = "CONTRIBUYENTE RÉGIMEN RIMPE"
-	if(data_object.contribuyenteRimpe != 1):
-		contribuyenteRimpe = ""
+	contribuyenteRimpe = data_object.contribuyenteRimpe or ""
 
 	#Se asigna datos de emisor en caso de que no haya transportista asignado
 	if(not data_object.razonSocialTransportista):

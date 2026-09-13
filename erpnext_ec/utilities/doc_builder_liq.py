@@ -99,6 +99,8 @@ def build_doc_liq(doc_name):
 		doc.sri_validated = sri_validated
 		doc.sri_validated_message = sri_validated_message
 
+		normalize_establishment_and_ptoemi(doc)
+
 		if(not doc.secuencial or doc.secuencial == 0):
 			new_secuencial = setSecuencial(doc, 'LIQ')
 			if new_secuencial > 0:
@@ -112,12 +114,7 @@ def build_doc_liq(doc_name):
 		secuencial = doc.secuencial
 		ruc = doc.tax_id #doc.company_tax_id
 		
-		puntoEmision_rec = get_full_ptoemi(doc.ptoemi)
-		doc.ptoemi = puntoEmision_rec.record_name
 		puntoEmision = doc.ptoemi
-		
-		establecimiento_rec = get_full_establishment(doc.estab)
-		doc.estab = establecimiento_rec.record_name
 		establecimiento = doc.estab
 
 		if(ruc == None):
@@ -182,7 +179,7 @@ def build_doc_liq_sri(data_object):
 		detalles.append({
                 "codigoPrincipal": item.item_code,
                 "descripcion": item.description.upper(),
-                "cantidad": item.qty,
+                "cantidad": "{:.2f}".format(item.qty),
                 "precioUnitario": "{:.2f}".format(item.precioUnitario),
                 "descuento": "{:.2f}".format(item.qty * item.discount_amount),
                 "precioTotalSinImpuesto": "{:.2f}".format(item.precioTotalSinImpuesto),
@@ -223,9 +220,7 @@ def build_doc_liq_sri(data_object):
 		not data_object.agenteRetencion == '0'):
 		agenteRetencion = data_object.agenteRetencion
 
-	contribuyenteRimpe = "CONTRIBUYENTE RÉGIMEN RIMPE"
-	if(data_object.contribuyenteRimpe != 1):
-		contribuyenteRimpe = ""
+	contribuyenteRimpe = data_object.contribuyenteRimpe or ""
 
 	data = {
         "infoTributaria": {
@@ -254,12 +249,8 @@ def build_doc_liq_sri(data_object):
 			"direccionProveedor": data_object.direccionProveedor,
             "totalSinImpuestos": "{:.2f}".format(data_object.base_total),
             "totalDescuento": "{:.2f}".format(data_object.discount_amount),
-			"codDocReembolso": "00",
-			"totalComprobantesReembolso": data_object.grand_total,
-			"totalBaseImponibleReembolso": data_object.grand_total,
-			"totalImpuestoReembolso": data_object.grand_total,
             "totalConImpuestos": totalConImpuestos,
-            "importeTotal": data_object.grand_total,
+            "importeTotal": "{:.2f}".format(data_object.grand_total),
             "moneda": "DOLAR",
             "pagos": pagos
         },

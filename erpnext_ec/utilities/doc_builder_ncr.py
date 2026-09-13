@@ -98,6 +98,8 @@ def build_doc_ncr(doc_name):
 		doc.sri_validated = sri_validated
 		doc.sri_validated_message = sri_validated_message
 
+		normalize_establishment_and_ptoemi(doc)
+
 		if(not doc.secuencial or doc.secuencial == 0):
 			new_secuencial = setSecuencial(doc, 'NCR')
 			if new_secuencial > 0:
@@ -110,7 +112,7 @@ def build_doc_ncr(doc_name):
 		fechaEmision = doc.posting_date
 		puntoEmision = doc.ptoemi
 		secuencial = doc.secuencial
-		ruc = doc.company_tax_id
+		ruc = doc.tax_id
 		establecimiento = doc.estab
 
 		claveAcceso = GenerarClaveAcceso(tipoDocumento, 
@@ -174,7 +176,7 @@ def build_doc_ncr_sri(data_object):
 		detalles.append({
                 "codigoInterno": item.item_code,
                 "descripcion": item.description.upper(),
-                "cantidad": abs(item.qty),
+                "cantidad": "{:.2f}".format(abs(item.qty)),
                 "precioUnitario": "{:.2f}".format(abs(item.precioUnitario)),
                 "descuento": "{:.2f}".format(abs(item.qty * item.discount_amount)),
                 "precioTotalSinImpuesto": "{:.2f}".format(abs(item.precioTotalSinImpuesto)),
@@ -208,7 +210,7 @@ def build_doc_ncr_sri(data_object):
             "ptoEmi" : data_object.ptoemi,
             "secuencial" : '{:09d}'.format(data_object.secuencial),
             "dirMatriz" : data_object.DireccionMatriz.upper(),
-			"contribuyenteRimpe": "CONTRIBUYENTE RÉGIMEN RIMPE"			
+			"contribuyenteRimpe": data_object.contribuyenteRimpe or ""
         },
         "infoNotaCredito": {
             "fechaEmision": data_object.posting_date.strftime("%d/%m/%Y"), # data_object.posting_date,
@@ -224,7 +226,7 @@ def build_doc_ncr_sri(data_object):
 			"fechaEmisionDocSustento": data_object.fechaEmisionDocSustento.strftime("%d/%m/%Y"),
             
             "totalSinImpuestos": "{:.2f}".format(abs(data_object.base_total)),
-            "valorModificacion": data_object.valorModificacion,
+            "valorModificacion": "{:.2f}".format(abs(data_object.valorModificacion)),
 			"moneda": "DOLAR",
             "totalConImpuestos": totalConImpuestos,            
             

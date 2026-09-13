@@ -98,19 +98,24 @@ def build_doc_nde(doc_name):
 		doc.sri_validated = sri_validated
 		doc.sri_validated_message = sri_validated_message
 
+		doc.paymentsItems = get_payments_sri(doc.name)
+		doc.pagos = build_pagos(doc.paymentsItems)
+
+		normalize_establishment_and_ptoemi(doc)
+
 		if(not doc.secuencial or doc.secuencial == 0):
-			new_secuencial = setSecuencial(doc, 'NCR')
+			new_secuencial = setSecuencial(doc, 'NDE')
 			if new_secuencial > 0:
 				doc.secuencial = new_secuencial			
 
-		tipoDocumento = '04'
+		tipoDocumento = '05'
 		tipoAmbiente = doc.ambiente
 		tipoEmision = 1
 
 		fechaEmision = doc.posting_date
 		puntoEmision = doc.ptoemi
 		secuencial = doc.secuencial
-		ruc = doc.company_tax_id
+		ruc = doc.tax_id
 		establecimiento = doc.estab
 
 		claveAcceso = GenerarClaveAcceso(tipoDocumento, 
@@ -129,113 +134,89 @@ def build_doc_nde(doc_name):
 		return doc
 
 def build_doc_nde_sri(data_object):
-	
-	#print(data_object)
-	#return ""
-
-	totalConImpuestos = []
+	impuestos = []
 
 	for taxItem in data_object.taxes:
-		totalConImpuestos.append({
-			"totalImpuesto": {
-						"codigo": taxItem.sricode,
-						"codigoPorcentaje": taxItem.codigoPorcentaje,
-						"baseImponible": "{:.2f}".format(abs(taxItem.baseImponible)),						
-						"valor": "{:.2f}".format(abs(taxItem.tax_amount))
-					}
-		})
-
-	#print(data_object['items'])
-
-	detalles = []
-
-	for item in data_object['items']:
-
-		#print(item)
-		impuestos = []
-
-		for impuesto in item.impuestos:
-			#print(impuesto)
-
-			impuestos.append({
-					"impuesto": {
-						"codigo": impuesto['codigo'],
-						"codigoPorcentaje": impuesto['codigoPorcentaje'],
-						"tarifa": "{:.2f}".format(impuesto['tarifa']),
-						"baseImponible": "{:.2f}".format(abs(impuesto['baseImponible'])),
-						"valor": "{:.2f}".format(abs(impuesto['valor'])) #impuesto['valor']
-					}})
-
-		#ErpNext coloca descuento negativo cuando el precio es modificado a un precio mas alto
-		# es decir , llena el campo discount_amount pero no el discount_percentage
-		#if (item.discount_amount < 0 and item.discount_percentage == 0):
-		#	item.discount_amount = 0
-
-		detalles.append({
-                "codigoInterno": item.item_code,
-                "descripcion": item.description.upper(),
-                "cantidad": abs(item.qty),
-                "precioUnitario": "{:.2f}".format(abs(item.precioUnitario)),
-                "descuento": "{:.2f}".format(abs(item.qty * item.discount_amount)),
-                "precioTotalSinImpuesto": "{:.2f}".format(abs(item.precioTotalSinImpuesto)),
-                "impuestos": impuestos
-            })
+		impuestos.append(
+			{
+				"impuesto": {
+					"codigo": taxItem.get("sricode"),
+					"codigoPorcentaje": taxItem.get("codigoPorcentaje"),
+					"tarifa": "{:.2f}".format(taxItem.rate),
+					"baseImponible": "{:.2f}".format(abs(taxItem.baseImponible)),
+					"valor": "{:.2f}".format(abs(taxItem.tax_amount)),
+				}
+			}
+		)
 
 	infoAdicional = []
 	for infoAdicionalItem in data_object.infoAdicional:
-		if(infoAdicionalItem['valor']):
+		if infoAdicionalItem["valor"]:
 			infoAdicional.append(
+				{
+					"nombre": infoAdicionalItem["nombre"],
+					"valor": infoAdicionalItem["valor"].upper(),
+				}
+			)
+
+	pagos = []
+	for pagoItem in (data_object.get("pagos") or []):
+		pagos.append(
 			{
-				"nombre": infoAdicionalItem['nombre'],
-				"valor": infoAdicionalItem['valor'].upper()
-			})
-		
-	obligadoContabilidad = 'NO'
-	if(data_object.obligadoContabilidad == 1):
-		obligadoContabilidad = 'SI'
+				"pago": {
+					"formaPago": pagoItem["formaPago"],
+					"total": "{:.2f}".format(pagoItem["total"]),
+					"plazo": pagoItem["plazo"],
+					"unidadTiempo": pagoItem["unidadTiempo"],
+				}
+			}
+		)
+
+	obligadoContabilidad = "NO"
+	if data_object.obligadoContabilidad == 1:
+		obligadoContabilidad = "SI"
+
+	valor_total = data_object.get("valorModificacion") or data_object.get("grand_total") or 0
+	fecha_sustento = data_object.get("fechaEmisionDocSustento")
 
 	data = {
-        "infoTributaria": {
-            "ambiente": data_object.ambiente,
-            "tipoEmision": "1",
-            "razonSocial": data_object.razonSocial.upper(),
-            "nombreComercial": data_object.nombreComercial.upper(),
-			
-            "ruc": data_object.tax_id,
-            "claveAcceso": data_object.claveAcceso,
-            "codDoc": "04",
-            "estab" : data_object.estab,
-            "ptoEmi" : data_object.ptoemi,
-            "secuencial" : '{:09d}'.format(data_object.secuencial),
-            "dirMatriz" : data_object.DireccionMatriz.upper(),
-			"contribuyenteRimpe": "CONTRIBUYENTE RÉGIMEN RIMPE"			
-        },
-        "infoNotaDebito": {
-            "fechaEmision": data_object.posting_date.strftime("%d/%m/%Y"), # data_object.posting_date,
-            "dirEstablecimiento": data_object.dirEstablecimiento.upper(),
+		"infoTributaria": {
+			"ambiente": data_object.ambiente,
+			"tipoEmision": "1",
+			"razonSocial": data_object.razonSocial.upper(),
+			"nombreComercial": data_object.nombreComercial.upper(),
+			"ruc": data_object.tax_id,
+			"claveAcceso": data_object.claveAcceso,
+			"codDoc": "05",
+			"estab": data_object.estab,
+			"ptoEmi": data_object.ptoemi,
+			"secuencial": "{:09d}".format(data_object.secuencial),
+			"dirMatriz": data_object.DireccionMatriz.upper(),
+			"contribuyenteRimpe": data_object.contribuyenteRimpe or "",
+		},
+		"infoNotaDebito": {
+			"fechaEmision": data_object.posting_date.strftime("%d/%m/%Y"),
+			"dirEstablecimiento": data_object.dirEstablecimiento.upper(),
 			"tipoIdentificacionComprador": data_object.tipoIdentificacionComprador,
-            "razonSocialComprador": data_object.customer_name.upper(),
-            "identificacionComprador": data_object.customer_tax_id,
-            "contribuyenteEspecial": data_object.contribuyenteEspecial,
-            "obligadoContabilidad": obligadoContabilidad,
-			
-			"codDocModificado": data_object.codDocModificado,
-			"numDocModificado": data_object.numDocModificado,
-			"fechaEmisionDocSustento": data_object.fechaEmisionDocSustento.strftime("%d/%m/%Y"),
-            
-            "totalSinImpuestos": "{:.2f}".format(abs(data_object.base_total)),
-            "valorModificacion": data_object.valorModificacion,
-			"moneda": "DOLAR",
-            "totalConImpuestos": totalConImpuestos,            
-            
-			"motivo": data_object.motivo,
-        },
-        "detalles": {
-            "detalle": detalles
-        },
-        "infoAdicional": {
-            "campoAdicional": infoAdicional
-        }
-    }
+			"razonSocialComprador": data_object.customer_name.upper(),
+			"identificacionComprador": data_object.customer_tax_id,
+			"contribuyenteEspecial": data_object.contribuyenteEspecial,
+			"obligadoContabilidad": obligadoContabilidad,
+			"codDocModificado": data_object.get("codDocModificado") or "01",
+			"numDocModificado": data_object.get("numDocModificado"),
+			"fechaEmisionDocSustento": fecha_sustento.strftime("%d/%m/%Y") if fecha_sustento else None,
+			"totalSinImpuestos": "{:.2f}".format(abs(data_object.base_total)),
+			"impuestos": impuestos,
+			"valorTotal": "{:.2f}".format(abs(valor_total)),
+			"pagos": pagos,
+		},
+		"motivos": {
+			"motivo": {
+				"razon": data_object.get("motivo") or "AJUSTE",
+				"valor": "{:.2f}".format(abs(valor_total)),
+			}
+		},
+		"infoAdicional": {"campoAdicional": infoAdicional},
+	}
 
 	return data

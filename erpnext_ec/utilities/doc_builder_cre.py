@@ -103,6 +103,8 @@ def build_doc_cre(doc_name):
 		doc.sri_validated = sri_validated
 		doc.sri_validated_message = sri_validated_message
 
+		normalize_establishment_and_ptoemi(doc)
+
 		if(not doc.secuencial or doc.secuencial == 0):
 			new_secuencial = setSecuencial(doc, 'CRE')
 			if new_secuencial > 0:
@@ -149,7 +151,7 @@ def build_doc_cre_sri(data_object):
 		#fechaEmisionDocSustento = datetime.strptime(fecha_string, "%Y-%m-%dT%H:%M:%S")
 		
 		impuestos.append({			
-			"codigo": taxItem.idx,
+			"codigo": taxItem.codigo or taxItem.idx,
 			"codigoRetencion": taxItem.codigoRetencionId,
 			"baseImponible": "{:.2f}".format(taxItem.baseImponible),
 			"porcentajeRetener": "{:.2f}".format(taxItem.porcentajeRetener),
@@ -175,9 +177,7 @@ def build_doc_cre_sri(data_object):
 		obligadoContabilidad = 'SI'
 	
 	agenteRetencion = None
-	contribuyenteRimpe = "CONTRIBUYENTE RÉGIMEN RIMPE"
-	if(data_object.contribuyenteRimpe != 1):
-		contribuyenteRimpe = ""
+	contribuyenteRimpe = data_object.contribuyenteRimpe or ""
 
 	codDoc = "07"
 

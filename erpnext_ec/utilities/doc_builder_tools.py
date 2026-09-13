@@ -157,7 +157,16 @@ def get_full_company_sri(def_company):
 
         compania_sri['ruc'] = doc.tax_id
         compania_sri['obligadoContabilidad'] = doc.obligadocontabilidad
-        compania_sri['contribuyenteRimpe'] = doc.contribuyenterimpe
+
+        tipo_contribuyente = doc.get('tipo_contribuyente') or ''
+        if tipo_contribuyente == 'RIMPE Negocio Popular':
+            compania_sri['contribuyenteRimpe'] = 'CONTRIBUYENTE NEGOCIO POPULAR - RÉGIMEN RIMPE'
+        elif tipo_contribuyente == 'RIMPE Emprendedor' or doc.contribuyenterimpe:
+            compania_sri['contribuyenteRimpe'] = 'CONTRIBUYENTE RÉGIMEN RIMPE'
+        else:
+            compania_sri['contribuyenteRimpe'] = ''
+        compania_sri['tipoContribuyente'] = tipo_contribuyente
+
         compania_sri['agenteRetencion'] = doc.agenteretencion
         compania_sri['contribuyenteEspecial'] = doc.contribuyenteespecial
 
@@ -1096,3 +1105,22 @@ def get_full_ptoemi(record_name):
     if docs:
         doc = docs[0]
         return doc
+
+
+def normalize_establishment_and_ptoemi(doc):
+    """Resolve the estab/ptoemi Link values to their record_name.
+
+    Transaction documents store a Link (document name) but the SRI XML and the
+    sequence lookup expect the ``record_name`` (e.g. "001"/"002").
+    """
+    if doc.get("estab"):
+        rec = get_full_establishment(doc.estab)
+        if rec and rec.get("record_name"):
+            doc.estab = rec.record_name
+
+    if doc.get("ptoemi"):
+        rec = get_full_ptoemi(doc.ptoemi)
+        if rec and rec.get("record_name"):
+            doc.ptoemi = rec.record_name
+
+    return doc
