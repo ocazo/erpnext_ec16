@@ -175,7 +175,7 @@ def build_doc_ncr_sri(data_object):
 
 		detalles.append({
                 "codigoInterno": item.item_code,
-                "descripcion": item.description.upper(),
+                "descripcion": (item.get("description") or item.get("item_name") or "").upper(),
                 "cantidad": "{:.2f}".format(abs(item.qty)),
                 "precioUnitario": "{:.2f}".format(abs(item.precioUnitario)),
                 "descuento": "{:.2f}".format(abs(item.qty * item.discount_amount)),

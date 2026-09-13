@@ -194,7 +194,7 @@ def build_doc_fac_sri(data_object):
 
 		detalles.append({
                 "codigoPrincipal": item.item_code,
-                "descripcion": item.description.upper(),
+                "descripcion": (item.get("description") or item.get("item_name") or "").upper(),
                 "cantidad": "{:.2f}".format(item.qty),
                 "precioUnitario": "{:.2f}".format(item.precioUnitario),
                 "descuento": "{:.2f}".format(item.qty * item.discount_amount),
