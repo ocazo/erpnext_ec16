@@ -12,8 +12,11 @@ frappe.pages["sri-validation"].on_page_load = function (wrapper) {
 		<div class="text-muted" style="margin-bottom: 16px;">
 			${__("Verificación de la configuración necesaria para emitir documentos electrónicos del SRI.")}
 		</div>
+		<div class="sri-quick-links" style="margin-bottom: 20px;"></div>
 		<div class="sri-validation-results"></div>
 	`);
+
+	render_quick_links(page);
 
 	page.set_primary_action(__("Revalidar"), function () {
 		frappe.sri_validation.load(page);
@@ -21,6 +24,29 @@ frappe.pages["sri-validation"].on_page_load = function (wrapper) {
 
 	frappe.sri_validation.load(page);
 };
+
+function render_quick_links(page) {
+	var links = [
+		{ label: __("Firmas Electrónicas"), route: ["List", "Sri Signature"] },
+		{ label: __("Establecimientos"), route: ["List", "Sri Establishment"] },
+		{ label: __("Puntos de Emisión"), route: ["List", "Sri Ptoemi"] },
+		{ label: __("Secuencias"), route: ["List", "Sri Sequence"] },
+		{ label: __("Retenciones"), route: ["List", "Purchase Withholding Sri Ec"] },
+		{ label: __("Configuración Regional"), route: ["List", "Regional Settings Ec"] },
+	];
+
+	var $links = $(page.body).find(".sri-quick-links");
+
+	links.forEach(function (link) {
+		$(
+			`<button class="btn btn-default btn-sm" style="margin: 0 6px 6px 0;">${link.label}</button>`
+		)
+			.on("click", function () {
+				frappe.set_route.apply(null, link.route);
+			})
+			.appendTo($links);
+	});
+}
 
 frappe.sri_validation.status_pill = function (ready) {
 	if (ready) {
