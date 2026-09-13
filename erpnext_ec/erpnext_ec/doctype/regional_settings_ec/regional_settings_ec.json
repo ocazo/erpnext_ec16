@@ -3,7 +3,7 @@
  "autoname": "format:EXP-{YYYY}-{#####}",
  "creation": "2023-12-21 01:27:30.810619",
  "doctype": "DocType",
- "document_type": "Document", 
+ "document_type": "Document",
  "show_name_in_global_search": 1,
  "engine": "InnoDB",
  "field_order": [
@@ -12,120 +12,118 @@
  ],
  "fields": [
   {
-    "fieldname": "url_server_beebtech",
-    "fieldtype": "Data",
-    "in_list_view": 1,
-    "in_preview": 1,
-    "label": "Url Server Beebtech",    
-    "docstatus": 0,
-    "is_custom_field": 1
+   "fieldname": "url_server_beebtech",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Url Server Beebtech",
+   "docstatus": 0
   },
   {
-    "fieldname": "usuario",
-    "fieldtype": "Data",
-    "in_list_view": 1,
-    "in_preview": 1,
-    "label": "Usuario"
+   "fieldname": "usuario",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Usuario"
   },
   {
-    "fieldname": "password",
-    "fieldtype": "Password",
-    "in_list_view": 1,
-    "in_preview": 1,
-    "label": "Contraseña"
+   "fieldname": "password",
+   "fieldtype": "Password",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Contraseña"
   },
   {
-    "fieldname": "server_timeout",
-    "fieldtype": "Int",
-    "in_list_view": 0,
-    "in_preview": 0,
-    "label": "Server Timeout"
-  },
-  {	
-    "fieldname": "use_external_service",
-    "fieldtype": "Check",		
-		"label": "Usar servicio externo",
-		"in_list_view": 1,
-    "in_preview": 1,
-    "description": "Si selecciona esta opción se usará la url configurada como herramienta para las tareas de envio del SRI, como firma y autorización..."
-	},
-  {    
-    "fieldname": "signature_tool",
-    "fieldtype": "Select",		
-		"label": "Herramienta de firma electrónica",
-		"in_list_view": 1,
-    "in_preview": 1,    
-    "description": "Opciones de herramientas de firma electrónica.....",
-    "options": "XadesSignerCmd\nPython Native (With Fails)\nExterno (No implementado)"    
-	},  
-  {
-    "fieldname": "p12",
-    "fieldtype": "Attach",
-    "in_list_view": 0,
-    "in_preview": 0,
-    "label": "Firma"
+   "fieldname": "server_timeout",
+   "fieldtype": "Int",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Server Timeout"
   },
   {
-    "description":"Si usa este modo, los documentos no serán enviados al SRI, solo se harán una simulación",
-		"fieldtype": "Check",
-		"fieldname": "use_simulation_mode",
-    "in_list_view": 0,
-    "in_preview": 0,
-    "label": "Usar modo simulación"
-	},
-  {
-    "description":"Documentos electrónicos se enviarán automáticamente según la programación configurada.",
-		"fieldtype": "Check",
-		"fieldname": "send_sri_auto",
-    "in_list_view": 0,
-    "in_preview": 0,
-    "label": "Envío automático al SRI"
-	},
-  {
-    "default": 20,
-    "description":"Este valor representa la cantidad de documentos que se enviarán masivamente en el tiempo determinado.",
-    "fieldname": "send_sri_batch_docs",
-    "fieldtype": "Int",
-    "in_list_view": 0,
-    "in_preview": 0,    
-    "label": "Lote de documentos"
+   "fieldname": "use_external_service",
+   "fieldtype": "Check",
+   "label": "Usar servicio externo",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "description": "Si selecciona esta opción se usará la url configurada como herramienta para las tareas de envio del SRI, como firma y autorización..."
   },
   {
-    "default":"*/5 * * * *",
-    "description":"Ej. */5 * * * * (every 5 min) */15 * * * * (every 15 min) */30 * * * * (every 30 min) 0 * * * * (every hour)",
-    "fieldname": "send_sri_cron",
-    "fieldtype": "Data",
-    "in_list_view": 0,
-    "in_preview": 0,
-    "label": "Temporizador/Cron"
+   "fieldname": "signature_tool",
+   "fieldtype": "Select",
+   "label": "Herramienta de firma electrónica",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "description": "Opciones de herramientas de firma electrónica.....",
+   "options": "XadesSignerCmd\nPython Native (With Fails)\nExterno (No implementado)"
   },
   {
-    "default": true,
-    "description":"Permite que los documentos electrónicos se envíen manualmente.",
-		"fieldtype": "Check",
-		"fieldname": "send_sri_manual",
-    "in_list_view": 0,
-    "in_preview": 0,
-    "label": "Envío manual al sri"
-	},
+   "fieldname": "p12",
+   "fieldtype": "Attach",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Firma"
+  },
   {
-    "default": false,
-    "description":"Dummy Email Send (No envía correo al cliente, sino al email configurado)",
-		"fieldtype": "Check",
-		"fieldname": "dummy_email_send",
-    "in_list_view": 0,
-    "in_preview": 0,
-    "label": "Dummy Email Send"
-	},
+   "description": "Si usa este modo, los documentos no serán enviados al SRI, solo se harán una simulación",
+   "fieldtype": "Check",
+   "fieldname": "use_simulation_mode",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Usar modo simulación"
+  },
   {
-    "default": "@gmail.com",
-    "fieldname": "dummy_email_target",
-    "fieldtype": "Data",
-    "in_list_view": 1,
-    "in_preview": 1,
-    "label": "Dummy Email Target",    
-    "docstatus": 0,
-    "is_custom_field": 0
+   "description": "Documentos electrónicos se enviarán automáticamente según la programación configurada.",
+   "fieldtype": "Check",
+   "fieldname": "send_sri_auto",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Envío automático al SRI"
+  },
+  {
+   "default": 20,
+   "description": "Este valor representa la cantidad de documentos que se enviarán masivamente en el tiempo determinado.",
+   "fieldname": "send_sri_batch_docs",
+   "fieldtype": "Int",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Lote de documentos"
+  },
+  {
+   "default": "*/5 * * * *",
+   "description": "Ej. */5 * * * * (every 5 min) */15 * * * * (every 15 min) */30 * * * * (every 30 min) 0 * * * * (every hour)",
+   "fieldname": "send_sri_cron",
+   "fieldtype": "Data",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Temporizador/Cron"
+  },
+  {
+   "default": true,
+   "description": "Permite que los documentos electrónicos se envíen manualmente.",
+   "fieldtype": "Check",
+   "fieldname": "send_sri_manual",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Envío manual al sri"
+  },
+  {
+   "default": false,
+   "description": "Dummy Email Send (No envía correo al cliente, sino al email configurado)",
+   "fieldtype": "Check",
+   "fieldname": "dummy_email_send",
+   "in_list_view": 0,
+   "in_preview": 0,
+   "label": "Dummy Email Send"
+  },
+  {
+   "default": "@gmail.com",
+   "fieldname": "dummy_email_target",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Dummy Email Target",
+   "docstatus": 0
   }
  ],
  "index_web_pages_for_search": 1,
