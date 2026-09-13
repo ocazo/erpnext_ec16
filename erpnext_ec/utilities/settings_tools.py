@@ -224,28 +224,20 @@ def load_sri_sequences(company):
 	pass
 
 def get_last_sequencial_found(company_id, sri_type_doc_lnk, sri_environment_lnk):
-	if sri_type_doc_lnk == "FAC":
-			#'sri_environment_lnk': sri_environment_lnk,
-			# TODO: Agregar "ambiente" en las tablas
-			docs_found = frappe.get_list("Sales Invoice",  fields=[f"MAX(secuencial) as max_secuencial"], filters={        	
-				'company': company_id,
-    		})
-			#print(docs_found)
-			#print(docs_found[0].max_secuencial)
-			return docs_found[0].max_secuencial			
-		#elif sri_type_doc_lnk ==  "GRS":
-		#elif sri_type_doc_lnk ==  "CRE":
-	if sri_type_doc_lnk == "GRS":
-		docs_found = frappe.get_list("Delivery Note",  fields=[f"MAX(secuencial) as max_secuencial"], filters={        	
-				'company': company_id,
-    		})
-		return docs_found[0].max_secuencial
-	
-	if sri_type_doc_lnk == "CRE":
-		docs_found = frappe.get_list("Purchase Withholding Sri Ec",  fields=[f"MAX(secuencial) as max_secuencial"], filters={        	
-				'company': company_id,
-    		})
-		return docs_found[0].max_secuencial
-			 
-	
+	# Frappe v16 no longer allows raw SQL functions as field strings in get_list/get_all
+	doctype_by_type = {
+		"FAC": "Sales Invoice",
+		"GRS": "Delivery Note",
+		"CRE": "Purchase Withholding Sri Ec",
+	}
 
+	doctype = doctype_by_type.get(sri_type_doc_lnk)
+	if not doctype:
+		return 0
+
+	result = frappe.db.sql(
+		f"SELECT MAX(secuencial) FROM `tab{doctype}` WHERE company = %s",
+		company_id,
+	)
+	max_secuencial = result[0][0] if result and result[0][0] is not None else 0
+	return max_secuencial

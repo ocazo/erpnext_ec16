@@ -45,6 +45,10 @@
   Company, Customer, Item, etc.) had typos (`inser_after`,
   `is_custom_field`) and had no loader under v16. A `load_custom_fields` patch
   now applies them idempotently with `create_custom_fields`.
+- **Sequences**: `settings_tools.get_last_sequencial_found` used
+  `frappe.get_list(..., fields=["MAX(secuencial) as max_secuencial"])`, which
+  v16 rejects ("SQL functions are not allowed as strings in SELECT"). Replaced
+  with a `frappe.db.sql` aggregate.
 
 ### Added
 - `CHANGELOG.md`.
