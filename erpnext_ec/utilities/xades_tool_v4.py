@@ -594,7 +594,7 @@ def sign_xml(
     #print(type(xades_bes))
     #print(type(xml))
     
-    signed_xml = xml.replace(tail_tag, xades_bes + tail_tag)
+    signed_xml = xml.replace(tail_tag, xades_bes.strip() + tail_tag)
     
     return signed_xml
 
