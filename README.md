@@ -76,4 +76,4 @@ Para emitir una **Factura de Venta**:
 
 ## Licencia
 
-GNU General Public License (v3). Ver [license.txt](license.txt).
+MIT. Ver [license.txt](license.txt).

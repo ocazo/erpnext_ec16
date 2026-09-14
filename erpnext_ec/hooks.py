@@ -3,7 +3,7 @@ app_title = "ERPNext Ec"
 app_publisher = "BeebTech"
 app_description = "ERPNext Ecuador"
 app_email = "ronald.chonillo@gmail.com"
-app_license = "gpl-3.0"
+app_license = "mit"
 
 # Required Apps
 required_apps = ["erpnext"]

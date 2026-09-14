@@ -9,7 +9,8 @@
   signer is `utilities/xades_tool_v4.py` (lxml + cryptography) and the external
   `utilities/apps/XadesSignerCmd`, so those packages were only pulled into the
   login/XML import path without being used.
-- `hooks.py`: `app_license` set to `gpl-3.0` (matches `license.txt`).
+- `hooks.py`: `app_license` kept as `mit` (matches `license.txt`; the original
+  README's GPLv3 text was unedited ERPNext boilerplate).
 - Removed legacy hooks not supported in v16 (`jenv`, `jenv_customizations`,
   `get_translated_dict`) and version checks (`is_frappe_above_v12/v13/v14`).
 - Assets keep using `app_include_js` / `app_include_css` (the v16 mechanism);
