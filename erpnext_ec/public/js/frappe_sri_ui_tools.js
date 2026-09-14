@@ -117,14 +117,14 @@ function SetupCustomButtons(doc, DocTypeErpNext)
   <a class="btn btn-secondary dropdown-toggle btn-xs" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   </a>
   <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-    <a class="dropdown-item" href="javascript:document.Website.DownloadXml_v2('` + doc.name + `'); "><i class="fa fa-file-code-o" aria-hidden="true"></i> Xml ${doc.name}</a>
+    <a class="dropdown-item" href="javascript:document.Website.DownloadXml_v2('` + doc.name + `'); "><i class="fa fa-file-code-o" aria-hidden="true"></i> XML sin firmar ${doc.name}</a>
 	<a class="dropdown-item" href="javascript:document.Website.DownloadPdf_v2('` + doc.name + `'); "><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf ${doc.name}</a>    
-    <a class="dropdown-item hide" href="javascript:document.Website.DownloadXml('` + doc.name + `'); "><i class="fa fa-file-code-o" aria-hidden="true"></i> Xml ${doc.name}</a>
+    <a class="dropdown-item hide" href="javascript:document.Website.DownloadXml('` + doc.name + `'); "><i class="fa fa-file-code-o" aria-hidden="true"></i> XML sin firmar ${doc.name}</a>
     <a class="dropdown-item hide" href="javascript:document.Website.DownloadPdf('` + doc.name + `'); "><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Pdf ${doc.name}</a>
     <div class="dropdown-divider documentation-links"></div>
 	<a class="dropdown-item" href="javascript:document.Website.ShowInfo('` + doc.name + `'); "><i class="fa fa-info-circle" aria-hidden="true"></i> Ver información</a>
 	<div class="dropdown-divider documentation-links ${test_mode}"></div>
-	<a class="dropdown-item ${test_mode}" href="javascript:document.Website.DownloadXmlSigned('` + doc.name + `'); "><i class="fa fa-file-code-o" aria-hidden="true"></i> Xml Signed ${doc.name}</a>
+	<a class="dropdown-item ${test_mode}" href="javascript:document.Website.DownloadXmlSigned('` + doc.name + `'); "><i class="fa fa-file-code-o" aria-hidden="true"></i> XML firmado ${doc.name}</a>
   </div>
 </div>
 `;
@@ -234,20 +234,15 @@ function SetFormSriButtons(frm, DocTypeErpNext)
 		},);
 	}
 
-	frm.add_custom_button(__('<i class="fa fa-file-code-o"></i> Descargar XML'), function() 
+	frm.add_custom_button(__('<i class="fa fa-file-code-o"></i> Descargar XML (sin firmar)'), function() 
 	{
-		//frappe.show_alert({
-		//	message: __(`${frm.doc.name} Implementación requerida.`),
-		//	indicator: 'red'
-		//}, 3);
-
-		//console.log('DOC NAMEEEEEEEEEEE');
-		//console.log(frm.doc.name);
-
-		//document.Website.DownloadXml('` + frm.doc.name + `');
 		document.Website.DownloadXml_v2(frm.doc.name);
-
 	},__('<svg class="icon  icon-sm" style=""><use class="" href="#icon-organization"></use></svg>Sri')); //NO SOPORTA AWESOME ICONS
+
+	frm.add_custom_button(__('<i class="fa fa-file-code-o"></i> Descargar XML firmado'), function() 
+	{
+		document.Website.DownloadFile_v2(frm.doc.name, 'xmlsign');
+	},__('<svg class="icon  icon-sm" style=""><use class="" href="#icon-organization"></use></svg>Sri'));
 
 	frm.add_custom_button(__('<i class="fa fa-file-pdf-o"></i> Descargar PDF'), function() 
 	{		

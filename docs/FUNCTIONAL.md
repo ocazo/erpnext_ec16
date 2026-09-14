@@ -74,8 +74,15 @@ expiración, estado **Ready**). El botón **Revalidar** repite la verificación.
 3. Complete cliente, ítems e impuestos. Se habilitan **estab** y **ptoemi**
    (se autoseleccionan si hay configuración).
 4. Guarde y **Envíe**. Aparecen las acciones SRI:
-   - **Enviar al SRI** (firma y envía/simula)
-   - **Descargar XML** / **Descargar PDF**
+   - **Enviar al SRI**: genera, **firma** (XAdES-BES) y envía el comprobante (o
+     simula si está activo el modo simulación).
+   - **Descargar XML (sin firmar)**: XML generado, **sin** firma. Útil para
+     revisar la estructura/datos.
+   - **Descargar XML firmado**: XML con la firma electrónica XAdES-BES.
+   - **Descargar PDF**: representación impresa (RIDE).
+
+> La firma **no** se aplica al botón "XML (sin firmar)". Se firma al usar
+> **Enviar al SRI** o **Descargar XML firmado**.
 5. El estado de autorización queda en el documento (`numeroautorizacion`,
    `sri_estado`, `sri_response`).
 
