@@ -49,8 +49,11 @@ En **Company** complete la pestaña de datos SRI:
 ### 2.3 Establecimiento y punto de emisión
 1. Vaya a **Sri Establishment** → **Nuevo**: enlace la compañía, indique
    **record_name** (p. ej. `001`) y descripción.
-2. En la tabla **Puntos de emisión** agregue el punto (p. ej. `002`) y su
-   ambiente (`DES`/`PRO`).
+2. Cree los **Puntos de Emisión** en **Sri → Puntos de Emisión** (o con el botón
+   **Puntos de Emisión** dentro del establecimiento): indique el establecimiento,
+   el código de 3 dígitos (p. ej. `002`) y el ambiente (`DES`/`PRO`).
+3. Al marcar **Emitir al SRI** en una factura, se selecciona el punto
+   (`sri_ptoemi`) y el código (`ptoemi`, p. ej. `002`) se completa solo.
 
 ### 2.4 Secuencias, formatos de impresión y cuentas
 En **Sri → Configuración SRI** hay accesos directos. Ejecute (una sola vez):

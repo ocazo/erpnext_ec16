@@ -290,6 +290,15 @@ class TestSriXmlGeneration(FrappeTestCase):
 
 
 class TestSriInvoiceFlags(FrappeTestCase):
+	def test_sri_ptoemi_is_standalone(self):
+		self.assertFalse(frappe.get_meta("Sri Ptoemi").istable)
+
+	def test_sri_ptoemi_link_field(self):
+		df = frappe.get_meta("Sales Invoice").get_field("sri_ptoemi")
+		self.assertIsNotNone(df)
+		self.assertEqual(df.fieldtype, "Link")
+		self.assertEqual(df.options, "Sri Ptoemi")
+
 	def test_estab_ptoemi_not_mandatory(self):
 		meta = frappe.get_meta("Sales Invoice")
 		for fieldname in ("estab", "ptoemi"):

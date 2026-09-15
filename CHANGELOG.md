@@ -90,6 +90,21 @@
   `resolucion_gran_contribuyente`, `regimen_microempresas`,
   `ruc_proveedor_sistemas`.
 
+### Emission point model (Sri Ptoemi standalone)
+- `Sri Ptoemi` became a **standalone DocType** linked to `Sri Establishment`
+  (it was a child table). Frappe v16 cannot search Link fields pointing to
+  child DocTypes (`get_permitted_fieldnames` returns nothing), so the previous
+  model was unusable for a picker/validation.
+- Name is `{establishment}-{record_name}` (e.g. `001-002`); `sri_establishment`
+  and `record_name` are set on creation. A patch renames existing records and
+  links existing transactions.
+- Transactions keep `ptoemi` (Data, 3-digit code used by the XML/RIDE) and now
+  also have `sri_ptoemi` (Link) with `ptoemi` filled via
+  `fetch_from: sri_ptoemi.record_name`.
+- The Establishment form has a **Puntos de Emisión** button (list filtered by
+  establishment); the workspace shortcut points to the `Sri Ptoemi` list and
+  the report shows the sequences.
+
 ### Usability and permissions fixes
 - **v16 auto-fixtures**: `sync_fixtures` imports every `fixtures/*.json`
   automatically, which conflicted with the Custom Field loader. Seeds were moved

@@ -1,5 +1,12 @@
 frappe.ui.form.on('Sri Establishment', {
     refresh: function(frm) {
+        if (!frm.is_new()) {
+            frm.add_custom_button(__('Puntos de Emisión'), function() {
+                frappe.route_options = { sri_establishment: frm.doc.name };
+                frappe.set_route('List', 'Sri Ptoemi');
+            });
+        }
+
         if(frm.doc.__unsaved == 1)
         {            
             let route = frappe.get_prev_route();

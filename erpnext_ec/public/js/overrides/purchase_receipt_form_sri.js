@@ -6,10 +6,10 @@ frappe.ui.form.on(doctype_customized, {
         if (frm.doc.status == 'Draft')
         {
             //Fields for custom settings
-            frm.set_query('ptoemi', function() {
+            frm.set_query('sri_ptoemi', function() {
                 return {
                     filters: {
-                        'sri_establishment_lnk': frm.doc.estab
+                        'sri_establishment': frm.doc.estab
                     }
                 };
             });

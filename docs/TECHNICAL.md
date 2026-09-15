@@ -118,11 +118,16 @@ plantillas de email.
 `depends_on: eval:doc.emitir_sri`.
 
 ### DocTypes propios
-`Sri Environment`, `Sri Establishment`, `Sri Ptoemi`, `Sri Sequence`,
+`Sri Environment`, `Sri Establishment`, `Sri Ptoemi` (independiente; Link a
+Sri Establishment; name `{estab}-{record_name}`), `Sri Sequence`,
 `Sri Signature`, `Sri Type Doc`, `Sri Type Id`, `Sri External Establishment`,
 `Sri Establishment Link`, `Regional Settings Ec`, `Xml Responses`,
 `Purchase Withholding Sri Ec`, `Purchase Taxes and Charges Ec`,
 `Campo Adicional`, `Detalle Impuestos`, `Reembolso Detalle`.
+
+En las facturas, `ptoemi` (Data, código `002`) alimenta el XML/RIDE y
+`sri_ptoemi` (Link) es la entidad con sus secuencias (`fetch_from` llena el
+código).
 
 ## 5. Flujo de emisión (Factura)
 

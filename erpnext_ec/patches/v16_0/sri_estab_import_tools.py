@@ -1,124 +1,128 @@
 from __future__ import unicode_literals
-import os
-import frappe
+
 import json
+import os
+
+import frappe
+
+REOPEN_SEQ_DOCTYPES = {
+	"FAC": "Sales Invoice",
+	"GRS": "Delivery Note",
+	"CRE": "Purchase Withholding Sri Ec",
+}
+
 
 def get_last_sequencial_found(company_id, sri_type_doc_lnk, establishment, ptoemi):
-	if sri_type_doc_lnk == "FAC":
-			#'sri_environment_lnk': sri_environment_lnk,
-			# TODO: Agregar "ambiente" en las tablas
-			docs_found = frappe.get_list("Sales Invoice",  fields=[f"MAX(secuencial) as max_secuencial"], filters={        	
-				'company': company_id,
-                'estab': establishment,
-                'ptoemi': ptoemi,
-    		})
-			#print(docs_found)
-			#print(docs_found[0].max_secuencial)
-			return docs_found[0].max_secuencial			
-		#elif sri_type_doc_lnk ==  "GRS":
-		#elif sri_type_doc_lnk ==  "CRE":
-	if sri_type_doc_lnk == "GRS":
-		docs_found = frappe.get_list("Delivery Note",  fields=[f"MAX(secuencial) as max_secuencial"], filters={        	
-				'company': company_id,
-    		})
-		return docs_found[0].max_secuencial
-	
-	if sri_type_doc_lnk == "CRE":
-		docs_found = frappe.get_list("Purchase Withholding Sri Ec",  fields=[f"MAX(secuencial) as max_secuencial"], filters={        	
-				'company': company_id,
-    		})
-		return docs_found[0].max_secuencial
-     
+	# Frappe v16 no longer allows raw SQL functions in get_list fields.
+	doctype = REOPEN_SEQ_DOCTYPES.get(sri_type_doc_lnk)
+	if not doctype:
+		return 0
+
+	result = frappe.db.sql(
+		f"SELECT MAX(secuencial) FROM `tab{doctype}` "
+		"WHERE company = %s AND estab = %s AND ptoemi = %s",
+		(company_id, establishment, ptoemi),
+	)
+	return result[0][0] if result and result[0][0] is not None else 0
+
+
+def _upsert_ptoemi(establishment_name, company, record_name, child):
+	child = dict(child)
+	child.pop("naming_series", None)
+	child["doctype"] = "Sri Ptoemi"
+	child["sri_establishment"] = establishment_name
+	child["record_name"] = record_name
+	child["sec_factura"] = get_last_sequencial_found(
+		company, "FAC", establishment_name, record_name
+	)
+	child["sec_guiaremision"] = get_last_sequencial_found(
+		company, "GRS", establishment_name, record_name
+	)
+	child["sec_comprobanteretencion"] = get_last_sequencial_found(
+		company, "CRE", establishment_name, record_name
+	)
+
+	existing = frappe.get_all(
+		"Sri Ptoemi",
+		filters={"sri_establishment": establishment_name, "record_name": record_name},
+		fields=["name"],
+	)
+	if existing:
+		ptoemi = frappe.get_doc("Sri Ptoemi", existing[0].name)
+		ptoemi.update(child)
+		ptoemi.save(ignore_permissions=True)
+	else:
+		frappe.get_doc(child).insert(ignore_permissions=True)
+
+
 def insert_update(DocTypeName, JsonPath):
-    print("insert_update_data")
-    # Lee el archivo JSON
-    with open(JsonPath, 'r') as file:
-        contenido_json_modificado = file.read()
+	print("insert_update_data")
+	with open(JsonPath) as file:
+		data = json.loads(file.read())
 
-    default_company = frappe.defaults.get_user_default("Company") # compañía por defecto
-    print("Company:", default_company)
+	default_company = frappe.defaults.get_user_default("Company")
+	print("Company:", default_company)
 
-    data = json.loads(contenido_json_modificado)
+	for record in data:
+		record["company_link"] = default_company
+		record["name"] = record.get("name", "").replace("*", "")
+		ptoemi_detail = record.pop("sri_ptoemi_detail", [])
 
-    # Itera sobre los registros en el JSON e inserta/actualiza
-    for record in data:
-        record["company_link"] = default_company   # <- ojo: tu DocType tiene este campo
-        record["name"] = record["name"].replace("*","")
+		print("Procesando:", record["name"])
 
-        print("Procesando:", record["name"])
+		try:
+			existing = frappe.get_all(
+				DocTypeName,
+				filters={"record_name": record["record_name"]},
+				fields=["name"],
+			)
 
-        try:
-            existing = frappe.get_all(
-                DocTypeName,
-                filters={"record_name": record["record_name"]},
-                fields=["name"]
-            )
+			if existing:
+				document_object = frappe.get_doc(DocTypeName, existing[0].name)
+				for key, value in record.items():
+					if key != "name":
+						setattr(document_object, key, value)
+				document_object.save(ignore_permissions=True)
+			else:
+				document_object = frappe.get_doc(record)
+				document_object.insert(ignore_permissions=True)
 
-            if existing:
-                # Actualizar documento existente
-                document_object = frappe.get_doc(DocTypeName, existing[0].name)
-                print("Actualizando:", record["name"])
+			for child in ptoemi_detail:
+				_upsert_ptoemi(
+					document_object.name,
+					record["company_link"],
+					child["record_name"],
+					child,
+				)
 
-                # Actualizamos campos simples
-                for key, value in record.items():
-                    if key not in ["sri_ptoemi_detail", "name"]:  # child table se maneja aparte
-                        setattr(document_object, key, value)
+			frappe.db.commit()
 
-                # Actualizamos tabla hija (si viene en el JSON)
-                if "sri_ptoemi_detail" in record:
-                    document_object.sri_ptoemi_detail = []  # limpia antes de recargar
-                    for child in record["sri_ptoemi_detail"]:
-                        sales_invoice_max = get_last_sequencial_found(record["company_link"], 'FAC', record["name"], child['record_name'])
-                        if sales_invoice_max is None:
-                            sales_invoice_max = 0
-                        
-                        delivery_note_max = get_last_sequencial_found(record["company_link"], 'GRS', record["name"], child['record_name'])
-                        if delivery_note_max is None:
-                            delivery_note_max = 0
-                        
-                        purchase_withholding_max = get_last_sequencial_found(record["company_link"], 'CRE', record["name"], child['record_name'])                        
-                        if purchase_withholding_max is None:
-                            purchase_withholding_max = 0
+		except Exception as e:
+			print("Error en registro:", record.get("name"), "-", str(e))
+			frappe.db.rollback()
 
-                        child['sec_factura'] = sales_invoice_max
-                        child['sec_guiaremision'] = delivery_note_max
-                        child['sec_comprobanteretencion'] = purchase_withholding_max
+	print("Proceso terminado insert_update.")
 
-                        document_object.append("sri_ptoemi_detail", child)
-
-                document_object.save()
-            else:
-                # Crear nuevo documento
-                print("Creando:", record.get("name", "<sin name>"))
-                new_doc = frappe.get_doc(record)                
-                new_doc.insert(ignore_permissions=True)
-
-            frappe.db.commit()
-
-        except Exception as e:
-            print("❌ Error en registro:", record["name"], "-", str(e))
-            frappe.db.rollback()  # rollback solo el registro fallido, no todo el lote
-
-    print("Proceso terminado inser_update.")
 
 def execute():
-    cwd = os.getcwd()
-    dir_path = os.path.dirname(os.path.realpath(__file__))
+	dir_path = os.path.dirname(os.path.realpath(__file__))
 
-    source_list = [
-        {
-            "doctype" : "Sri Establishment",
-            "json_file" : "sri_establishment.json",
-            "action":"update"
-        },        
-    ]
+	source_list = [
+		{
+			"doctype": "Sri Establishment",
+			"json_file": "sri_establishment.json",
+			"action": "update",
+		},
+	]
 
-    for source_item in source_list:
-        print(source_item)
-        filepathfull = os.path.join(dir_path, "../../fixtures/specials", source_item['json_file'])
-        
-        try:            
-            if source_item["action"] == "update":
-                insert_update(source_item["doctype"], filepathfull)
-        except Exception as e:
-            return {"message": "Failed import.", "error": str(e)}
+	for source_item in source_list:
+		print(source_item)
+		filepathfull = os.path.join(
+			dir_path, "../../fixtures/specials", source_item["json_file"]
+		)
+
+		try:
+			if source_item["action"] == "update":
+				insert_update(source_item["doctype"], filepathfull)
+		except Exception as e:
+			return {"message": "Failed import.", "error": str(e)}

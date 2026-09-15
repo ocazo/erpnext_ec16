@@ -5,7 +5,7 @@ def execute(filters=None):
 	columns = [
 		{
 			"label": "Establecimiento",
-			"fieldname": "parent",
+			"fieldname": "sri_establishment",
 			"fieldtype": "Link",
 			"options": "Sri Establishment",
 			"width": 180,
@@ -39,11 +39,11 @@ def execute(filters=None):
 
 	data = frappe.db.sql(
 		"""
-		SELECT parent, record_name, description, sri_environment_lnk,
+		SELECT sri_establishment, record_name, description, sri_environment_lnk,
 			sec_factura, sec_notacredito, sec_notadebito,
 			sec_comprobanteretencion, sec_liquidacioncompra, sec_guiaremision
 		FROM `tabSri Ptoemi`
-		ORDER BY parent, record_name
+		ORDER BY sri_establishment, record_name
 		""",
 		as_dict=True,
 	)
