@@ -48,27 +48,22 @@ frappe.ui.form.on(doctype_customized, {
 
 async function set_default_sri_establishment(frm) {
 	try {
-		let estab = frm.doc.estab;
-		if (!estab) {
-			const estabs = await frappe.db.get_list("Sri Establishment", {
-				fields: ["name"],
-				limit: 1,
-			});
-			if (estabs.length) {
-				estab = estabs[0].name;
-				await frm.set_value("estab", estab);
-			}
+		if (frm.doc.estab && frm.doc.ptoemi) {
+			return;
 		}
 
-		if (estab && !frm.doc.ptoemi) {
-			const ptoemis = await frappe.db.get_list("Sri Ptoemi", {
-				fields: ["name"],
-				filters: { parent: estab },
-				limit: 1,
-			});
-			if (ptoemis.length) {
-				await frm.set_value("ptoemi", ptoemis[0].name);
-			}
+		// v16 no permite filtrar la tabla hija Sri Ptoemi por "parent" desde el
+		// cliente (PermissionError). Se resuelve en el servidor.
+		const r = await frappe.call({
+			method: "erpnext_ec.utilities.tools.get_sri_default_establishment",
+		});
+		const data = r.message || {};
+
+		if (!frm.doc.estab && data.estab) {
+			await frm.set_value("estab", data.estab);
+		}
+		if (!frm.doc.ptoemi && data.ptoemi) {
+			await frm.set_value("ptoemi", data.ptoemi);
 		}
 	} catch (e) {
 		// Sin configuración SRI: no bloquear la factura

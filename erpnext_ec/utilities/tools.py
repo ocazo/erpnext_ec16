@@ -28,6 +28,26 @@ def set_cookie(cookie_name, cookie_value):
     frappe.local.cookie_manager.set_cookie(cookie_name, cookie_value)    
     return '{status}'
 
+@frappe.whitelist()
+def get_sri_default_establishment():
+    """Return the first SRI establishment and its first emission point.
+
+    Uses frappe.db.sql on purpose: Frappe v16 forbids filtering a child table
+    (Sri Ptoemi) by its ``parent`` field through the client API, so this lookup
+    must run server-side.
+    """
+    estab = frappe.db.sql("SELECT name FROM `tabSri Establishment` ORDER BY name LIMIT 1")
+    if not estab:
+        return {}
+
+    estab_name = estab[0][0]
+    ptoemi = frappe.db.sql(
+        "SELECT name FROM `tabSri Ptoemi` WHERE parent = %s ORDER BY idx LIMIT 1",
+        estab_name,
+    )
+
+    return {"estab": estab_name, "ptoemi": ptoemi[0][0] if ptoemi else None}
+
 #Esta función servirá para evaluar la configuración actual del sistem
 # y determinar si es que esta apta para empezar a realizar documentos
 # electrónicos del SRI

@@ -13,7 +13,9 @@ import os
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
-FIXTURES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "fixtures"))
+FIXTURES_DIR = os.path.abspath(
+	os.path.join(os.path.dirname(__file__), "..", "..", "fixtures", "seed")
+)
 
 # Keys that belong to the Customize Form child grid / audit metadata and must
 # not be copied into the Custom Field document.
