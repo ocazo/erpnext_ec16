@@ -42,8 +42,8 @@
 - **XML generation**: `None` values are skipped and empty elements are removed
   before XSD validation (previously the literal string `None` was serialized
   and validation ran before pruning). `validate_xml` now returns a boolean.
-- Custom fields defined in `fixtures/*.json` (Sales Invoice, Purchase Invoice,
-  Company, Customer, Item, etc.) had typos (`inser_after`,
+- Custom fields defined in `fixtures/seed/*.json` (Sales Invoice, Purchase
+  Invoice, Company, Customer, Item, etc.) had typos (`inser_after`,
   `is_custom_field`) and had no loader under v16. A `load_custom_fields` patch
   now applies them idempotently with `create_custom_fields`.
 - **Sequences**: `settings_tools.get_last_sequencial_found` used
@@ -89,6 +89,24 @@
 - New optional Company fields: `facturacion_electronica`, `tipo_contribuyente`,
   `resolucion_gran_contribuyente`, `regimen_microempresas`,
   `ruc_proveedor_sistemas`.
+
+### Usability and permissions fixes
+- **v16 auto-fixtures**: `sync_fixtures` imports every `fixtures/*.json`
+  automatically, which conflicted with the Custom Field loader. Seeds were moved
+  to `fixtures/seed/*.json` (subfolder, not auto-imported) and the loader was
+  updated.
+- **Permissions**: added read access for role `All` to the SRI catalogues
+  (Sri Environment, Sri Establishment, Sri Ptoemi, Sri Sequence, Sri Type Doc,
+  Sri Type Id, Sri External Establishment, Sri Establishment Link,
+  Regional Settings Ec, Xml Responses) and read for `Accounts Manager` on
+  `Sri Signature`.
+- **Emitir al SRI**: fixed `PermissionError: Sri Ptoemi.parent` (v16 forbids
+  filtering child tables by `parent` from the client API). Default
+  establishment/emission point are now resolved server-side
+  (`utilities.tools.get_sri_default_establishment`).
+- **Puntos de Emisión**: added a standard **Script Report**
+  `Puntos de Emision SRI`; the workspace shortcut pointed to a child DocType and
+  returned 404.
 
 ### Pending / not changed on purpose
 - Some conditional annexes are not emitted yet: `valorDevolucionIva` (ANEXO 20),

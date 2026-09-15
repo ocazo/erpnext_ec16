@@ -11,7 +11,7 @@ erpnext_ec/                  # paquete de la app (hooks, patches, public, utilit
   erpnext_ec/                # módulo "Erpnext Ec" (DocTypes propios)
   erpnext_sri/               # módulo "Erpnext Sri" (catálogos SRI, workspace, page)
   patches/v16_0/             # parches de migración
-  fixtures/*.json            # Custom Fields (Sales Invoice, Company, Customer, Account...)
+  fixtures/seed/*.json       # Custom Fields (subcarpeta no autoimportada por v16)
   utilities/                 # XML builders, firma, WS del SRI, utilidades
   public/js/                 # overrides de formularios/listas y UI SRI
   tests/                     # pruebas unitarias
@@ -32,8 +32,10 @@ erpnext_ec/                  # paquete de la app (hooks, patches, public, utilit
 - **Sin** `override_doctype_class` ni `override_whitelisted_methods`.
 
 Los **Custom Fields** se inyectan por el parche
-`patches/v16_0/load_custom_fields.py`, que lee `fixtures/*.json`. No se usa
-`hooks.fixtures`.
+`patches/v16_0/load_custom_fields.py`, que lee `fixtures/seed/*.json`. En v16
+`sync_fixtures` importa automáticamente todos los `.json` de `fixtures/`, por lo
+que los seeds viven en la subcarpeta `seed/` (no autoimportada) para no chocar
+con el loader.
 
 ## 3. Cambios de migración a v16
 
