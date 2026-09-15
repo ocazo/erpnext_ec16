@@ -42,7 +42,7 @@ def get_sri_default_establishment():
 
     estab_name = estab[0][0]
     ptoemi = frappe.db.sql(
-        "SELECT name FROM `tabSri Ptoemi` WHERE parent = %s ORDER BY idx LIMIT 1",
+        "SELECT record_name FROM `tabSri Ptoemi` WHERE parent = %s ORDER BY idx LIMIT 1",
         estab_name,
     )
 

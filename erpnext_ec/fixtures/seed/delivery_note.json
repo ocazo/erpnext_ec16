@@ -70,10 +70,10 @@
   "idx": 16,
   "docstatus": 0,
   "label": "ptoemi",
-  "fieldtype": "Link",
+  "fieldtype": "Data",
   "fieldname": "ptoemi",
   "doctype": "Custom Field",
-  "options": "Sri Ptoemi",
+  "options": "",
   "dt": "Delivery Note",
   "insert_after": "estab"
  },

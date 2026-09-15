@@ -1122,8 +1122,12 @@ def get_full_establishment(record_name):
         return doc
 
 def get_full_ptoemi(record_name):    
-    docs = frappe.get_all('Sri Ptoemi', fields='*', filters={'name': record_name})    
-    
+    # ``ptoemi`` stores the record_name (e.g. "002"); accept the legacy child
+    # document name as fallback.
+    docs = frappe.get_all('Sri Ptoemi', fields='*', filters={'record_name': record_name})
+    if not docs:
+        docs = frappe.get_all('Sri Ptoemi', fields='*', filters={'name': record_name})
+
     if docs:
         doc = docs[0]
         return doc

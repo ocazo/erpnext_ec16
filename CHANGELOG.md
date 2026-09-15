@@ -107,6 +107,16 @@
 - **Puntos de Emisión**: added a standard **Script Report**
   `Puntos de Emision SRI`; the workspace shortcut pointed to a child DocType and
   returned 404.
+- **`ptoemi` is now a Data field** (stores the SRI emission point code, e.g.
+  `002`). A Link to the child DocType `Sri Ptoemi` cannot be searched in v16
+  (`get_permitted_fieldnames` returns no fields for child tables without a
+  parent), which caused "Insufficient Permission for Sri Ptoemi". A patch
+  converts existing values from the child name to `record_name`.
+- **Select permission**: link validation (`validate_link_and_fetch`) requires
+  `select` (not only `read`); the SRI catalogues now grant `read`+`select` to
+  role `All` (and to `Accounts Manager`/`System Manager` on `Sri Signature`).
+- Fixed the **Puntos de Emisión** button inside the *Configuración SRI* page
+  (routed to the child DocType list → 404); it now opens the report.
 
 ### Pending / not changed on purpose
 - Some conditional annexes are not emitted yet: `valorDevolucionIva` (ANEXO 20),

@@ -3,3 +3,5 @@ erpnext_ec.patches.v16_0.load_custom_fields
 
 [post_model_sync]
 erpnext_ec.patches.v16_0.sri_permissions
+erpnext_ec.patches.v16_0.sri_select_permissions
+erpnext_ec.patches.v16_0.migrate_ptoemi_to_record_name

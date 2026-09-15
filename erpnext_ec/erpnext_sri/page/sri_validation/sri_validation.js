@@ -29,7 +29,7 @@ function render_quick_links(page) {
 	var links = [
 		{ label: __("Firmas Electrónicas"), route: ["List", "Sri Signature"] },
 		{ label: __("Establecimientos"), route: ["List", "Sri Establishment"] },
-		{ label: __("Puntos de Emisión"), route: ["List", "Sri Ptoemi"] },
+		{ label: __("Puntos de Emisión"), route: ["query-report", "Puntos de Emision SRI"] },
 		{ label: __("Secuencias"), route: ["List", "Sri Sequence"] },
 		{ label: __("Retenciones"), route: ["List", "Purchase Withholding Sri Ec"] },
 		{ label: __("Configuración Regional"), route: ["List", "Regional Settings Ec"] },
