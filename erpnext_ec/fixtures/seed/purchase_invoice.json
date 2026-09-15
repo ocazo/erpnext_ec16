@@ -562,7 +562,7 @@
   "fetch_if_empty": 0,
   "permlevel": 0,
   "hidden": 0,
-  "read_only": 0,
+  "read_only": 1,
   "collapsible": 0,
   "allow_bulk_edit": 0,
   "ignore_user_permissions": 0,
@@ -578,7 +578,8 @@
   "columns": 0,
   "doctype": "Custom Field",
   "dt": "Purchase Invoice",
-  "insert_after": "estab"
+  "insert_after": "sri_ptoemi",
+  "fetch_from": "sri_ptoemi.record_name"
  },
  {
   "name": "Purchase Invoice-secuencial",
@@ -817,6 +818,21 @@
   "print_hide": 0,
   "print_hide_if_no_value": 0,
   "columns": 0,
+  "doctype": "Custom Field",
+  "dt": "Purchase Invoice"
+ },
+ {
+  "name": "Purchase Invoice-sri_ptoemi",
+  "parent": "Customize Form",
+  "parentfield": "fields",
+  "parenttype": "Customize Form",
+  "docstatus": 0,
+  "label": "Punto de Emisión",
+  "fieldtype": "Link",
+  "fieldname": "sri_ptoemi",
+  "options": "Sri Ptoemi",
+  "insert_after": "estab",
+  "depends_on": "eval:doc.emitir_sri",
   "doctype": "Custom Field",
   "dt": "Purchase Invoice"
  }

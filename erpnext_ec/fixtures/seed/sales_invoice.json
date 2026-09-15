@@ -577,9 +577,11 @@
   "columns": 0,
   "doctype": "Custom Field",
   "dt": "Sales Invoice",
-  "read_only": 0,
+  "read_only": 1,
   "depends_on": "eval:doc.emitir_sri",
-  "mandatory_depends_on": "eval:doc.emitir_sri"
+  "mandatory_depends_on": "eval:doc.emitir_sri",
+  "fetch_from": "sri_ptoemi.record_name",
+  "insert_after": "sri_ptoemi"
  },
  {
   "name": "Sales Invoice-secuencial",
@@ -637,6 +639,21 @@
   "insert_after": "secuencial",
   "depends_on": "eval:doc.emitir_sri",
   "description": "Placa del vehículo (facturas de transporte, ANEXO 25 Ficha Técnica SRI).",
+  "doctype": "Custom Field",
+  "dt": "Sales Invoice"
+ },
+ {
+  "name": "Sales Invoice-sri_ptoemi",
+  "parent": "Customize Form",
+  "parentfield": "fields",
+  "parenttype": "Customize Form",
+  "docstatus": 0,
+  "label": "Punto de Emisión",
+  "fieldtype": "Link",
+  "fieldname": "sri_ptoemi",
+  "options": "Sri Ptoemi",
+  "insert_after": "estab",
+  "depends_on": "eval:doc.emitir_sri",
   "doctype": "Custom Field",
   "dt": "Sales Invoice"
  }

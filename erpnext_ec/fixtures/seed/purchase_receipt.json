@@ -546,7 +546,9 @@
   "columns": 0,
   "doctype": "Custom Field",
   "dt": "Purchase Receipt",
-  "read_only": 0
+  "read_only": 1,
+  "fetch_from": "sri_ptoemi.record_name",
+  "insert_after": "sri_ptoemi"
  },
  {
   "name": "Purchase Receipt-secuencial",
@@ -588,6 +590,21 @@
   "print_hide_if_no_value": 0,
   "columns": 0,
   "no_copy": 1,
+  "doctype": "Custom Field",
+  "dt": "Purchase Receipt"
+ },
+ {
+  "name": "Purchase Receipt-sri_ptoemi",
+  "parent": "Customize Form",
+  "parentfield": "fields",
+  "parenttype": "Customize Form",
+  "docstatus": 0,
+  "label": "Punto de Emisión",
+  "fieldtype": "Link",
+  "fieldname": "sri_ptoemi",
+  "options": "Sri Ptoemi",
+  "insert_after": "estab",
+  "depends_on": "eval:doc.emitir_sri",
   "doctype": "Custom Field",
   "dt": "Purchase Receipt"
  }

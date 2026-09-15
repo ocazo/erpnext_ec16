@@ -3,17 +3,16 @@
  "allow_events_in_timeline": 1,
  "allow_import": 1,
  "allow_rename": 1,
- "autoname": "naming_series:",
+ "autoname": "format:{sri_establishment}-{record_name}",
  "creation": "2023-12-21 01:27:30.810619",
  "doctype": "DocType",
  "document_type": "Setup",
- "editable_grid": 1,
  "engine": "InnoDB",
- "istable": 1,
  "field_order": [
+  "sri_establishment",
   "record_name",
   "description",
-  "naming_series",
+  "sri_environment_lnk",
   "column_break_10001",
   "sec_factura",
   "sec_notacredito",
@@ -24,23 +23,24 @@
  ],
  "fields": [
   {
-   "default": "PTO-.",
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Series",
+   "bold": 1,
+   "fieldname": "sri_establishment",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Establecimiento",
    "no_copy": 1,
-   "options": "PTO-.",
-   "set_only_once": 1
+   "options": "Sri Establishment",
+   "reqd": 1
   },
   {
    "bold": 1,
    "fieldname": "record_name",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "Record Name",
+   "in_list_view": 1,
+   "label": "Punto de Emisión",
    "no_copy": 1,
-   "oldfieldname": "record_name",
-   "oldfieldtype": "Data",
    "reqd": 1,
    "search_index": 1
   },
@@ -53,17 +53,17 @@
    "reqd": 1
   },
   {
-    "fieldname": "sri_environment_lnk",
-    "fieldtype": "Link",
-    "default":"DES",
-    "in_list_view": 1,
-    "in_preview": 1,
-    "label": "Ambiente",
-    "options":"Sri Environment",
-    "reqd": 1
-   },
+   "default": "DES",
+   "fieldname": "sri_environment_lnk",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Ambiente",
+   "options": "Sri Environment",
+   "reqd": 1
+  },
   {
-   "description": "Secuencial inicial por tipo de comprobante",
+   "description": "Secuencial por tipo de comprobante",
    "fieldname": "column_break_10001",
    "fieldtype": "Column Break"
   },
@@ -71,54 +71,42 @@
    "default": "0",
    "fieldname": "sec_factura",
    "fieldtype": "Int",
-   "in_list_view": 1,
-   "in_preview": 1,
    "label": "Factura"
   },
   {
    "default": "0",
    "fieldname": "sec_notacredito",
    "fieldtype": "Int",
-   "in_list_view": 1,
-   "in_preview": 1,
    "label": "Nota Cr\u00e9dito"
   },
   {
    "default": "0",
    "fieldname": "sec_notadebito",
    "fieldtype": "Int",
-   "in_list_view": 1,
-   "in_preview": 1,
    "label": "Nota D\u00e9bito"
   },
   {
    "default": "0",
    "fieldname": "sec_comprobanteretencion",
    "fieldtype": "Int",
-   "in_list_view": 1,
-   "in_preview": 1,
    "label": "Comprobante Retenci\u00f3n"
   },
   {
    "default": "0",
    "fieldname": "sec_liquidacioncompra",
    "fieldtype": "Int",
-   "in_list_view": 1,
-   "in_preview": 1,
    "label": "Liquidaci\u00f3n Compra"
   },
   {
    "default": "0",
    "fieldname": "sec_guiaremision",
    "fieldtype": "Int",
-   "in_list_view": 1,
-   "in_preview": 1,
    "label": "Gu\u00eda Remisi\u00f3n"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-06 22:26:16.188346",
+ "modified": "2026-09-14 05:00:00.000000",
  "modified_by": "Administrator",
  "module": "Erpnext Sri",
  "name": "Sri Ptoemi",
@@ -135,10 +123,36 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "select": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "select": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "select": 1,
+   "share": 1
   }
  ],
+ "search_fields": "record_name, description, sri_establishment",
  "show_name_in_global_search": 1,
+ "sort_field": "record_name",
  "sort_order": "ASC",
  "states": [],
  "title_field": "record_name",

@@ -42,11 +42,17 @@ def get_sri_default_establishment():
 
     estab_name = estab[0][0]
     ptoemi = frappe.db.sql(
-        "SELECT record_name FROM `tabSri Ptoemi` WHERE parent = %s ORDER BY idx LIMIT 1",
+        "SELECT name, record_name FROM `tabSri Ptoemi` "
+        "WHERE sri_establishment = %s ORDER BY record_name LIMIT 1",
         estab_name,
+        as_dict=True,
     )
 
-    return {"estab": estab_name, "ptoemi": ptoemi[0][0] if ptoemi else None}
+    return {
+        "estab": estab_name,
+        "sri_ptoemi": ptoemi[0]["name"] if ptoemi else None,
+        "ptoemi": ptoemi[0]["record_name"] if ptoemi else None,
+    }
 
 #Esta función servirá para evaluar la configuración actual del sistem
 # y determinar si es que esta apta para empezar a realizar documentos

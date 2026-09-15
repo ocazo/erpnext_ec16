@@ -1055,7 +1055,7 @@ def setSecuencial(doc, typeDocSri):
         sequence_object = frappe.get_all('Sri Ptoemi', 
                                         fields = ['*'],
                                         filters = {
-                                            'parent': establishment_object[0].name,
+                                            'sri_establishment': establishment_object[0].name,
                                             'record_name': doc.ptoemi,
                                             'sri_environment_lnk': company_object.sri_active_environment                                            
                                             })
@@ -1087,7 +1087,7 @@ def setSecuencial(doc, typeDocSri):
             #doc_sequence_object = frappe.get_last_doc('Sri Sequence', filters = { 'id': sequence_object[0].id })
             doc_sequence_object = frappe.get_last_doc('Sri Ptoemi', 
                     filters = { 
-                        'parent': establishment_object[0].name,
+                        'sri_establishment': establishment_object[0].name,
                                             'record_name': doc.ptoemi,
                                             'sri_environment_lnk': company_object.sri_active_environment
                                          })
@@ -1144,7 +1144,11 @@ def normalize_establishment_and_ptoemi(doc):
         if rec and rec.get("record_name"):
             doc.estab = rec.record_name
 
-    if doc.get("ptoemi"):
+    if doc.get("sri_ptoemi"):
+        rec = get_full_ptoemi(doc.sri_ptoemi)
+        if rec and rec.get("record_name"):
+            doc.ptoemi = rec.record_name
+    elif doc.get("ptoemi"):
         rec = get_full_ptoemi(doc.ptoemi)
         if rec and rec.get("record_name"):
             doc.ptoemi = rec.record_name

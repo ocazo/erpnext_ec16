@@ -55,26 +55,11 @@
      "in_preview": 1,
      "label": "Description",
      "reqd": 1
-   },
-   {
-     "label": "Puntos de Emisión",
-     "fieldtype": "Section Break",
-     "fieldname": "estab_detail_section",		
-     "in_preview": 0,
-     "bold": 1,
-     "collapsible": 0
-   },
-   {
-    "label": "Puntos de Emisión",
-    "fieldtype": "Table",
-    "fieldname": "sri_ptoemi_detail",		
-    "in_preview": 0,
-    "options": "Sri Ptoemi"
-  }
-  ],
+   }
+   ],
   "index_web_pages_for_search": 1,
   "links": [],
-  "modified": "2023-12-21 03:17:38.359596",
+  "modified": "2026-09-14 05:00:00.000000",
   "modified_by": "Administrator",
   "module": "Erpnext Sri",
   "name": "Sri Establishment",
@@ -94,7 +79,7 @@
    "write": 1
   }
  ],
-  "search_fields": "record_name, description, sri_ptoemi_detail",
+  "search_fields": "record_name, description",
   "sort_field": "record_name",
   "sort_order": "ASC",
   "states": [],
