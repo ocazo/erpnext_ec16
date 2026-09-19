@@ -265,11 +265,13 @@ def get_full_customer_sri(def_customer):
             should_update_typeidtax = True
 
         if not doc.typeidtax:
-            doc.typeidtax = '04'
-            #Cuando el campo typeidtax esta vacio
+            # RUC = 13 dígitos (04); Cédula = 10 dígitos (05).
+            # Otros documentos (pasaporte 06, exterior 08, placa 09,
+            # consumidor final 07) deben informarse en el cliente.
             if doc.tax_id and len(doc.tax_id) == 10:
-                #Se asumira que es CEDULA
-                doc.typeidtax = '05'
+                doc.typeidtax = '05'  # Cédula
+            else:
+                doc.typeidtax = '04'  # RUC (13 dígitos) u otro
 
             should_update_typeidtax = True
         
