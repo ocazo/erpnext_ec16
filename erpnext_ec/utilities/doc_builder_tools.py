@@ -260,21 +260,17 @@ def get_full_customer_sri(def_customer):
 
         should_update_typeidtax = False
 
-        if len(doc.typeidtax) > 2:
-            print(doc.typeidtax[:2])
+        if doc.typeidtax and len(doc.typeidtax) > 2:
             doc.typeidtax = doc.typeidtax[:2]
-            should_update_typeidtax = True        
-        
-        if len(doc.typeidtax) == 0:            
+            should_update_typeidtax = True
+
+        if not doc.typeidtax:
             doc.typeidtax = '04'
             #Cuando el campo typeidtax esta vacio
-            if(len(doc.tax_id) == 10):
+            if doc.tax_id and len(doc.tax_id) == 10:
                 #Se asumira que es CEDULA
                 doc.typeidtax = '05'
-            #if(len(doc.tax_id) == 13):
-                #Se asumira que es RUC
-            #    doc.typeidtax = '04'
-            
+
             should_update_typeidtax = True
         
 
