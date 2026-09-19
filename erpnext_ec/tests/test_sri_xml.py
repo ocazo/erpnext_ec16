@@ -331,3 +331,35 @@ class TestSriInvoiceFlags(FrappeTestCase):
 		self.assertTrue(doc.name)
 		self.assertFalse(doc.get("estab"))
 		self.assertFalse(doc.get("ptoemi"))
+
+
+class TestCustomerTaxIdType(FrappeTestCase):
+	def _make_customer(self, tax_id, typeidtax=None):
+		doc = frappe.get_doc(
+			{
+				"doctype": "Customer",
+				"customer_name": frappe.generate_hash("CUST", 8),
+				"customer_type": "Individual",
+				"tax_id": tax_id,
+				"typeidtax": typeidtax,
+			}
+		)
+		doc.insert(ignore_permissions=True)
+		return doc.name
+
+	def _resolve(self, name):
+		from erpnext_ec.utilities.doc_builder_tools import get_full_customer_sri
+
+		return get_full_customer_sri(name)["tipoIdentificacionComprador"]
+
+	def test_tax_id_10_digits_is_cedula(self):
+		name = self._make_customer("0912345678")
+		self.assertEqual(self._resolve(name), "05")
+
+	def test_tax_id_13_digits_is_ruc(self):
+		name = self._make_customer("0993371265001")
+		self.assertEqual(self._resolve(name), "04")
+
+	def test_existing_typeidtax_is_respected(self):
+		name = self._make_customer("0912345678", typeidtax="04")
+		self.assertEqual(self._resolve(name), "04")
