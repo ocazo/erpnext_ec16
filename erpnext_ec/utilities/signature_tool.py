@@ -58,8 +58,11 @@ class SriXmlData():
                 )
                 return private_key , p12
         except Exception as e:
-            #print("Error validate_password:" + e)
             print(u"Error validate_password: %s", e)
+            frappe.log_error(
+                title="erpnext_ec: no se pudo cargar el certificado .p12",
+                message=f"Sri Signature {sri_signature.name}: {e}",
+            )
             return None, None    
         
     def validate_password_old(self, sri_signature):
@@ -107,6 +110,8 @@ class SriXmlData():
             
             return sri_signature_validated, p12
         
+        return None, None
+
     def get_sri_signature_for_old(self, doc):
         #print(doc)
 

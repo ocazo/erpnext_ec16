@@ -152,24 +152,41 @@ def validate_sri_settings():
                 first_record = sri_signature[0]
                 first_record_json = json.dumps(first_record, indent=4)
                 verify_data = verify_signature(first_record_json)
-                print('===============================')
-                print(verify_data)
-                expiry_date = verify_data['not_valid_after']
+                expiry_date = (
+                    verify_data.get("not_valid_after") if isinstance(verify_data, dict) else None
+                )
 
-                # Obtener la fecha actual
-                current_date = datetime.now()
-
-                expiry_date_str = expiry_date.strftime("%Y-%m-%d %H:%M:%S")
-                # Comparar las fechas
-                if expiry_date < current_date:
-                    #print("La fecha está expirada.")
-                    alerts.append({"index": 0,
-                            "description": f"Firma Electrónica expirada {expiry_date_str}", 
-                            "help": f"Debe emitir una nueva firma electrónica.", 
-                            "type": "error"})
+                if (
+                    not isinstance(verify_data, dict)
+                    or verify_data.get("status") != "success"
+                    or not isinstance(expiry_date, datetime)
+                ):
+                    alerts.append({
+                        "index": 0,
+                        "description": "No se pudo leer la firma electrónica (.p12 o contraseña incorrectos)",
+                        "help": "Verifique el archivo .p12 y la contraseña en Sri Signature.",
+                        "type": "error",
+                    })
                     SettingsAreReady = False
-                else:                    
-                    header.append({"index": 0, "description": "Firma Electrónica fecha expiración", "value": expiry_date_str})
+                else:
+                    current_date = (
+                        datetime.now(expiry_date.tzinfo) if expiry_date.tzinfo else datetime.now()
+                    )
+                    expiry_date_str = expiry_date.strftime("%Y-%m-%d %H:%M:%S")
+                    if expiry_date < current_date:
+                        alerts.append({
+                            "index": 0,
+                            "description": f"Firma Electrónica expirada {expiry_date_str}",
+                            "help": "Debe emitir una nueva firma electrónica.",
+                            "type": "error",
+                        })
+                        SettingsAreReady = False
+                    else:
+                        header.append({
+                            "index": 0,
+                            "description": "Firma Electrónica fecha expiración",
+                            "value": expiry_date_str,
+                        })
         else:
             alerts.append({"index": 0,
                             "description": "Firma Electrónica no seleccionada", 

@@ -86,7 +86,8 @@ def verify_signature(signature_doc):
 			"subject": "",
 			"not_valid_before": "",
 			"not_valid_after":"",
-			"status": "fail"
+			"status": "fail",
+			"message": "No se pudo cargar el certificado .p12 (archivo o contraseña incorrectos)"
 		}
 		return return_object 
 
@@ -108,14 +109,17 @@ def verify_signature(signature_doc):
 	#print(p12.issuer.human_friendly)
 
 	issuerName = p12.issuer.rfc4514_string()
-	
+
+	not_valid_before = getattr(p12, "not_valid_before_utc", None) or p12.not_valid_before
+	not_valid_after = getattr(p12, "not_valid_after_utc", None) or p12.not_valid_after
+
 	return_object = {
 		"tax_id": tax_id,
 		"issuer": issuerName,
 		"thumbprint":"",
 		"subject": p12.subject.rfc4514_string(),
-		"not_valid_before": p12.not_valid_before,
-		"not_valid_after":p12.not_valid_after,
+		"not_valid_before": not_valid_before,
+		"not_valid_after":not_valid_after,
 		"status": "success"
 	}
 	return return_object

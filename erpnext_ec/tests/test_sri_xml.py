@@ -363,3 +363,40 @@ class TestCustomerTaxIdType(FrappeTestCase):
 	def test_existing_typeidtax_is_respected(self):
 		name = self._make_customer("0912345678", typeidtax="04")
 		self.assertEqual(self._resolve(name), "04")
+
+
+class TestSignatureValidation(FrappeTestCase):
+	def test_verify_signature_unreadable_returns_fail(self):
+		from unittest import mock
+
+		from erpnext_ec.utilities import sri_ws
+
+		with mock.patch.object(
+			sri_ws.SriXmlData,
+			"get_sri_signature_from_json",
+			return_value=(None, None),
+		):
+			result = sri_ws.verify_signature(frappe.as_json({"name": "NONE"}))
+
+		self.assertEqual(result.get("status"), "fail")
+		self.assertNotIsInstance(result.get("not_valid_after"), datetime.datetime)
+
+	def test_validate_sri_settings_unreadable_signature_does_not_crash(self):
+		from unittest import mock
+
+		import erpnext_ec.utilities.tools as tools
+
+		fallback = {
+			"tax_id": "",
+			"issuer": "",
+			"thumbprint": "",
+			"subject": "",
+			"not_valid_before": "",
+			"not_valid_after": "",
+			"status": "fail",
+		}
+
+		with mock.patch.object(tools, "verify_signature", return_value=fallback):
+			result = tools.validate_sri_settings()
+
+		self.assertIn("groups", result)
