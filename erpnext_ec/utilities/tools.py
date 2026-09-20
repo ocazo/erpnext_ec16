@@ -29,27 +29,43 @@ def set_cookie(cookie_name, cookie_value):
     return '{status}'
 
 @frappe.whitelist()
-def get_sri_default_establishment():
-    """Return the first SRI establishment and its first emission point.
-
-    Uses frappe.db.sql on purpose: Frappe v16 forbids filtering a child table
-    (Sri Ptoemi) by its ``parent`` field through the client API, so this lookup
-    must run server-side.
+def get_sri_default_establishment(company=None):
+    """Return the default establishment and its emission point for the
+    company's active environment (DES/PRO).
     """
-    estab = frappe.db.sql("SELECT name FROM `tabSri Establishment` ORDER BY name LIMIT 1")
+    if not company:
+        company = frappe.db.get_single_value("Global Defaults", "default_company")
+    if not company:
+        companies = frappe.get_all("Company", pluck="name", limit=1)
+        company = companies[0] if companies else None
+
+    filters = {"company_link": company} if company else {}
+    estab = frappe.get_all(
+        "Sri Establishment",
+        filters=filters,
+        pluck="name",
+        limit=1,
+        order_by="record_name asc",
+    )
     if not estab:
         return {}
 
-    estab_name = estab[0][0]
+    estab_name = estab[0]
+    environment = (
+        frappe.db.get_value("Company", company, "sri_active_environment") if company else None
+    ) or "DES"
+
     ptoemi = frappe.db.sql(
         "SELECT name, record_name FROM `tabSri Ptoemi` "
-        "WHERE sri_establishment = %s ORDER BY record_name LIMIT 1",
-        estab_name,
+        "WHERE sri_establishment = %s AND sri_environment_lnk = %s "
+        "ORDER BY record_name LIMIT 1",
+        (estab_name, environment),
         as_dict=True,
     )
 
     return {
         "estab": estab_name,
+        "environment": environment,
         "sri_ptoemi": ptoemi[0]["name"] if ptoemi else None,
         "ptoemi": ptoemi[0]["record_name"] if ptoemi else None,
     }
@@ -97,16 +113,6 @@ def validate_sri_settings():
         #print(regional_settings_ec)
         #print('regional_settings_ec.signature_tool')
         #print(regional_settings_ec.signature_tool)
-
-        sri_sequences = frappe.get_all('Sri Sequence', filters = { 'company_id': company_item.name })
-        #print('Secuencias')
-        #print(len(sri_sequences))
-        if(len(sri_sequences)==0):
-            #print('SE REQUIERE CREAR SECUENCIAS para' + company_item.name)
-            alerts.append({"index": 0, "description": "Secuencias no creadas", "help":"Vaya a Secuencias SRI y haga clic en el botón 'Crear Secuencias''", "type":"error"})
-            SettingsAreReady = False
-        else:
-            header.append({"index": 0, "description": "Secuencias SRI", "value": len(sri_sequences)})
 
         print_formats = frappe.get_all('Print Format', filters = { "name": ["in", ['Factura SRI','Retención SRI','Guía de Remisión SRI']] })
         #print('---------PRINTS')

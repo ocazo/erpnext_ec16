@@ -80,7 +80,8 @@ on_session_creation = [
 before_install = "erpnext_ec.install.before_install"
 after_install = ["erpnext_ec.install.after_install"]
 
-# Keep Custom Fields in sync on every migrate (idempotent loader).
+# Keep Custom Fields and SRI catalogues in sync on every migrate (idempotent).
 after_migrate = [
 	"erpnext_ec.patches.v16_0.load_custom_fields.execute",
+	"erpnext_ec.patches.v16_0.load_sri_catalogs.execute",
 ]

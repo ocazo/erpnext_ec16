@@ -18,13 +18,16 @@ frappe.ui.form.on(doctype_customized, {
     {
         if (frm.doc.status == 'Draft')
         {
-            //Fields for custom settings
-            frm.set_query('sri_ptoemi', function() {
-                return {
-                    filters: {
-                        'sri_establishment': frm.doc.estab
+            // Punto de emisión del establecimiento y ambiente activo de la compañía
+            frappe.db.get_value("Company", frm.doc.company, "sri_active_environment").then((r) => {
+                const environment = r && r.message && r.message.sri_active_environment;
+                frm.set_query('sri_ptoemi', function() {
+                    const filters = { 'sri_establishment': frm.doc.estab };
+                    if (environment) {
+                        filters['sri_environment_lnk'] = environment;
                     }
-                };
+                    return { filters: filters };
+                });
             });
         }
 

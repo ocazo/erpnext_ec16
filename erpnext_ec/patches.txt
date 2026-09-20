@@ -6,3 +6,5 @@ erpnext_ec.patches.v16_0.sri_permissions
 erpnext_ec.patches.v16_0.sri_select_permissions
 erpnext_ec.patches.v16_0.migrate_ptoemi_to_record_name
 erpnext_ec.patches.v16_0.migrate_ptoemi_to_standalone
+erpnext_ec.patches.v16_0.migrate_ptoemi_environment_naming
+erpnext_ec.patches.v16_0.load_sri_catalogs

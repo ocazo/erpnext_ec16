@@ -2,12 +2,17 @@ var doctype_customized = "Sales Invoice";
 
 frappe.ui.form.on(doctype_customized, {
 	onload(frm) {
-		// El valor por defecto de "Emitir al SRI" se toma de la Compañía
-		if (frm.is_new() && frm.doc.company) {
+		// El valor por defecto de "Emitir al SRI" y el ambiente se toman de la Compañía
+		if (frm.doc.company) {
 			frappe.db
-				.get_value("Company", frm.doc.company, "facturacion_electronica")
+				.get_value("Company", frm.doc.company, [
+					"facturacion_electronica",
+					"sri_active_environment",
+				])
 				.then((r) => {
-					if (r && r.message && cint(r.message.facturacion_electronica)) {
+					const data = (r && r.message) || {};
+					frm.__sri_environment = data.sri_active_environment;
+					if (frm.is_new() && cint(data.facturacion_electronica)) {
 						frm.set_value("emitir_sri", 1);
 					}
 				});
@@ -35,7 +40,11 @@ frappe.ui.form.on(doctype_customized, {
 
 	refresh(frm) {
 		frm.set_query("sri_ptoemi", function () {
-			return { filters: { sri_establishment: frm.doc.estab } };
+			const filters = { sri_establishment: frm.doc.estab };
+			if (frm.__sri_environment) {
+				filters.sri_environment_lnk = frm.__sri_environment;
+			}
+			return { filters };
 		});
 
 		// Factura no electrónica: no se exige ni se muestra nada del SRI
