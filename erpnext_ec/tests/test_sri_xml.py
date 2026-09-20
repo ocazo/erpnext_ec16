@@ -400,3 +400,18 @@ class TestSignatureValidation(FrappeTestCase):
 			result = tools.validate_sri_settings()
 
 		self.assertIn("groups", result)
+
+
+class TestSriCatalogs(FrappeTestCase):
+	def test_load_catalogs_and_default_points(self):
+		from erpnext_ec.patches.v16_0 import load_sri_catalogs
+
+		load_sri_catalogs.execute()
+
+		self.assertTrue(frappe.db.exists("Sri Environment", "DES"))
+		self.assertTrue(frappe.db.exists("Sri Environment", "PRO"))
+		self.assertTrue(frappe.db.exists("Sri Type Doc", "FAC"))
+		self.assertTrue(frappe.db.exists("Sri Type Id", "04"))
+		# same point code 001 in both environments (no collision)
+		self.assertTrue(frappe.db.exists("Sri Ptoemi", "001-001-DES"))
+		self.assertTrue(frappe.db.exists("Sri Ptoemi", "001-001-PRO"))

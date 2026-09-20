@@ -95,15 +95,21 @@
   (it was a child table). Frappe v16 cannot search Link fields pointing to
   child DocTypes (`get_permitted_fieldnames` returns nothing), so the previous
   model was unusable for a picker/validation.
-- Name is `{establishment}-{record_name}` (e.g. `001-002`); `sri_establishment`
-  and `record_name` are set on creation. A patch renames existing records and
-  links existing transactions.
-- Transactions keep `ptoemi` (Data, 3-digit code used by the XML/RIDE) and now
-  also have `sri_ptoemi` (Link) with `ptoemi` filled via
+- The point name is now `{establishment}-{record_name}-{environment}`
+  (e.g. `001-001-DES`, `001-001-PRO`), so the same point code exists in DES and
+  PRO without collision — each environment keeps its own sequences.
+- Transactions keep `ptoemi` (Data, 3-digit code used by the XML/RIDE) and also
+  have `sri_ptoemi` (Link) with `ptoemi` filled via
   `fetch_from: sri_ptoemi.record_name`.
-- The Establishment form has a **Puntos de Emisión** button (list filtered by
-  establishment); the workspace shortcut points to the `Sri Ptoemi` list and
-  the report shows the sequences.
+- New idempotent loader `load_sri_catalogs` (runs in `after_migrate`): loads the
+  SRI catalogues (Environment, Type Doc, Type Id, External Establishment) and
+  Mode of Payment, and ensures the default establishment `001` with points
+  `001-001-DES` and `001-001-PRO`. A `git pull` + `bench migrate` is enough.
+- The establishment form has a **Puntos de Emisión** button; the workspace
+  shortcut points to the `Sri Ptoemi` list and the report shows the sequences.
+- Legacy `Sri Sequence` requirement removed from `validate_sri_settings` and
+  the dead `setSecuencial_obs` function deleted; numbering lives in the point's
+  `sec_*` fields (per environment).
 
 ### Usability and permissions fixes
 - **v16 auto-fixtures**: `sync_fixtures` imports every `fixtures/*.json`
